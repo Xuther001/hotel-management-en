@@ -19,6 +19,18 @@
   ],
   "reservations": [
     {
+      "id": "RES-1059",
+      "guest": "Willy",
+      "room": "G01",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-13",
+      "checkOut": "2026-10-15",
+      "guests": 2,
+      "status": "Confirmed",
+      "source": "Direct",
+      "amount": 1500000
+    },
+    {
       "id": "RES-1058",
       "guest": "Bill Tran",
       "room": "888",
@@ -98,7 +110,8 @@
       "type": "Standard Room",
       "propertyId": "hotel-a",
       "status": "Clean",
-      "floor": "G"
+      "floor": "G",
+      "note": ""
     },
     {
       "id": "A-G02",
@@ -520,6 +533,12 @@
     ]
   },
   "activity": [
+    {
+      "id": 1792478760932,
+      "text": "Reservation RES-1059 created for Willy",
+      "by": "Demo User",
+      "time": "01:46 PM"
+    },
     {
       "id": 1792378799695,
       "text": "Reservation RES-1058 created for Bill Tran",

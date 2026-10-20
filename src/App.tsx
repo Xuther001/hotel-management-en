@@ -129,19 +129,172 @@ function ReservationTable({ rows, compact = false }: { rows: AnyRow[]; compact?:
   return <div className="table-scroll"><table><thead><tr><th>BOOKING / GUEST</th><th>ROOM</th><th>STAY</th><th>STATUS</th>{!compact && <th>AMOUNT</th>}</tr></thead><tbody>{rows.map(r => <tr key={r.id}><td><strong>{r.guest}</strong><span className="cell-sub">{r.id} · {r.source}</span></td><td>{r.room}</td><td><span>{r.checkIn}</span><span className="cell-sub">to {r.checkOut}</span></td><td><Badge tone={r.status === 'Checked in' ? 'success' : r.status === 'Arriving today' ? 'info' : 'neutral'}>{r.status}</Badge></td>{!compact && <td className="amount-cell">{money(r.amount)}</td>}</tr>)}</tbody></table></div>;
 }
 function Reservations() {
-  const [rows, setRows] = useState<AnyRow[]>([]); const [query, setQuery] = useState(''); const [open, setOpen] = useState(false); const [loading, setLoading] = useState(true); const [error, setError] = useState('');
-  const load = () => { setLoading(true); api.reservations(query).then(r => setRows(r.data)).catch(e => setError(e.message)).finally(() => setLoading(false)); };
+  const [rows, setRows] = useState<AnyRow[]>([]);
+  const [query, setQuery] = useState('');
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [selectedProperty, setSelectedProperty] = useState('hotel-a');
+  const [checkInDate, setCheckInDate] = useState('2026-10-20');
+  const [checkOutDate, setCheckOutDate] = useState('2026-10-21');
+  const [selectedRoom, setSelectedRoom] = useState('');
+  const [roomOptions, setRoomOptions] = useState<AnyRow[]>([]);
+
+  const load = () => {
+    setLoading(true);
+    api.reservations(query).then(r => setRows(r.data))
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false));
+  };
   useEffect(() => { load(); }, [query]);
+
+  useEffect(() => {
+    if (!open) return;
+    let active = true;
+
+    if (!checkInDate || !checkOutDate || checkOutDate <= checkInDate) {
+      setRoomOptions([]);
+      setSelectedRoom('');
+      return;
+    }
+
+    Promise.all([api.rooms(), api.reservations()])
+      .then(([roomResult, reservationResult]) => {
+        if (!active) return;
+
+        const available = roomResult.data.filter((room: AnyRow) =>
+          room.propertyId === selectedProperty &&
+          room.status !== 'Maintenance' &&
+          !reservationResult.data.some((reservation: AnyRow) => {
+            const status = String(reservation.status || '').toLowerCase();
+            const cancelled = status === 'cancelled' || status === 'canceled';
+            return !cancelled &&
+              reservation.propertyId === selectedProperty &&
+              String(reservation.room) === String(room.number) &&
+              reservation.checkIn < checkOutDate &&
+              reservation.checkOut > checkInDate;
+          })
+        );
+
+        setRoomOptions(available);
+        setSelectedRoom(current =>
+          available.some((room: AnyRow) => String(room.number) === current)
+            ? current
+            : ''
+        );
+      })
+      .catch(e => {
+        if (active) setError(e.message);
+      });
+
+    return () => { active = false; };
+  }, [open, selectedProperty, checkInDate, checkOutDate]);
   async function submit(e: FormEvent<HTMLFormElement>) { e.preventDefault(); const f = new FormData(e.currentTarget); try { await api.createReservation({ guest:f.get('guest'), propertyId:f.get('propertyId'), room:f.get('room'), checkIn:f.get('checkIn'), checkOut:f.get('checkOut'), guests:f.get('guests'), amount:f.get('amount'), source:f.get('source') }); setOpen(false); load(); } catch(e:any) { alert(e.message); } }
-  return <><PageHeader eyebrow="HOTEL OPERATIONS" title="Reservations" description="Manage guest bookings, stay dates, and booking status." actions={<Button onClick={() => setOpen(true)}><Plus size={16}/> New reservation</Button>}/><div className="toolbar"><SearchBar value={query} onChange={setQuery} placeholder="Search guest, booking ID, source…"/><div className="toolbar-right"><Badge tone="info">{rows.length} bookings</Badge><Button variant="secondary" onClick={load}><RefreshCw size={15}/> Refresh</Button></div></div>{error && <div className="notice error">{error}</div>}<Panel title="All reservations" subtitle="Sample bookings from the simulated API">{loading ? <div className="loading">Loading reservations…</div> : <ReservationTable rows={rows}/>}</Panel>{open && <Modal title="Create reservation" onClose={() => setOpen(false)}><form className="form-grid" onSubmit={submit}><label className="span-2">Guest full name<input name="guest" required placeholder="Enter guest name"/></label><label>Hotel<select name="propertyId"><option value="hotel-a">Hotel A</option><option value="hotel-b">Hotel B</option></select></label><label>Room number<input name="room" placeholder="Unassigned"/></label><label>Check-in<input type="date" name="checkIn" required defaultValue="2026-10-20"/></label><label>Check-out<input type="date" name="checkOut" required defaultValue="2026-10-21"/></label><label>Guests<input type="number" name="guests" min="1" defaultValue="2"/></label><label>Amount (VND)<input type="number" name="amount" min="0" defaultValue="1500000"/></label><label className="span-2">Booking source<select name="source"><option>Direct</option><option>Phone</option><option>Walk-in</option><option>Booking.com</option><option>Agoda</option><option>Travel agent</option></select></label><div className="form-actions span-2"><Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button><Button type="submit">Create reservation</Button></div></form></Modal>}</>;
+  return <><PageHeader eyebrow="HOTEL OPERATIONS" title="Reservations" description="Manage guest bookings, stay dates, and booking status." actions={<Button onClick={() => setOpen(true)}><Plus size={16}/> New reservation</Button>}/><div className="toolbar"><SearchBar value={query} onChange={setQuery} placeholder="Search guest, booking ID, source…"/><div className="toolbar-right"><Badge tone="info">{rows.length} bookings</Badge><Button variant="secondary" onClick={load}><RefreshCw size={15}/> Refresh</Button></div></div>{error && <div className="notice error">{error}</div>}<Panel title="All reservations" subtitle="Sample bookings from the simulated API">{loading ? <div className="loading">Loading reservations…</div> : <ReservationTable rows={rows}/>}</Panel>{open && <Modal title="Create reservation" onClose={() => setOpen(false)}><form className="form-grid" onSubmit={submit}><label className="span-2">Guest full name<input name="guest" required placeholder="Enter guest name"/></label><label>Hotel<select name="propertyId" value={selectedProperty} onChange={e => { setSelectedProperty(e.target.value); setSelectedRoom(""); }}><option value="hotel-a">Hotel A</option><option value="hotel-b">Hotel B</option></select></label><label>Room number<select name="room" required value={selectedRoom} onChange={e => setSelectedRoom(e.target.value)}><option value="">Select an available room</option>{roomOptions.map((room: AnyRow) => <option key={room.id} value={room.number}>{room.number} · {room.type} · Floor {room.floor}</option>)}</select>{roomOptions.length === 0 && <small>No rooms available for these dates.</small>}</label><label>Check-in<input type="date" name="checkIn" required value={checkInDate} onChange={e => setCheckInDate(e.target.value)} /></label><label>Check-out<input type="date" name="checkOut" required min={checkInDate || undefined} value={checkOutDate} onChange={e => setCheckOutDate(e.target.value)} /></label><label>Guests<input type="number" name="guests" min="1" defaultValue="2"/></label><label>Amount (VND)<input type="number" name="amount" min="0" defaultValue="1500000"/></label><label className="span-2">Booking source<select name="source"><option>Direct</option><option>Phone</option><option>Walk-in</option><option>Booking.com</option><option>Agoda</option><option>Travel agent</option></select></label><div className="form-actions span-2"><Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button><Button type="submit">Create reservation</Button></div></form></Modal>}</>;
 }
 function Rooms({ property }: { property: string }) {
-  const [rows, setRows] = useState<AnyRow[]>([]); const [query, setQuery] = useState('');
-  const load = () => api.rooms(query).then(r => setRows(r.data.filter((x:AnyRow) => property === 'all' || x.propertyId === property))).catch(() => {});
+  const [rows, setRows] = useState<AnyRow[]>([]);
+  const [query, setQuery] = useState('');
+  const [noteDrafts, setNoteDrafts] = useState<Record<string, string>>({});
+  const [editingNotes, setEditingNotes] = useState<Record<string, boolean>>({});
+  const [savingNotes, setSavingNotes] = useState<Record<string, boolean>>({});
+
+  const load = () => api.rooms(query).then(r => {
+    const filtered = r.data.filter((x: AnyRow) => property === 'all' || x.propertyId === property);
+    setRows(filtered);
+    setNoteDrafts(prev => {
+      const next = { ...prev };
+      filtered.forEach((room: AnyRow) => {
+        if (next[room.id] === undefined) next[room.id] = room.note || '';
+      });
+      return next;
+    });
+  }).catch(() => {});
+
   useEffect(() => { load(); }, [query, property]);
-  async function changeStatus(id: string, status: string) { await api.updateRoomStatus(id, status); load(); }
-  const counts = useMemo(() => ({available: rows.filter(r => r.status === 'Clean').length, occupied: rows.filter(r => r.status === 'Occupied').length, dirty: rows.filter(r => r.status === 'Dirty').length, maintenance: rows.filter(r => r.status === 'Maintenance').length}), [rows]);
-  return <><PageHeader eyebrow="HOTEL OPERATIONS" title="Room management" description="View room availability and update operational status." actions={<Button variant="secondary" onClick={load}><RefreshCw size={15}/> Refresh</Button>}/><div className="mini-stat-grid"><div><span>Clean / available</span><strong>{counts.available}</strong></div><div><span>Occupied</span><strong>{counts.occupied}</strong></div><div><span>Needs cleaning</span><strong>{counts.dirty}</strong></div><div><span>Maintenance</span><strong>{counts.maintenance}</strong></div></div><div className="toolbar"><SearchBar value={query} onChange={setQuery} placeholder="Search room number or type…"/><span className="muted">{rows.length} sample rooms</span></div><div className="room-grid">{rows.map(room => <div className={`room-card status-${room.status.toLowerCase().replace(' ','-')}`} key={room.id}><div className="room-card-top"><div className="room-number">{room.number}</div><Badge tone={room.status==='Clean'?'success':room.status==='Occupied'?'info':room.status==='Dirty'?'warning':'danger'}>{room.status}</Badge></div><strong>{room.type}</strong><span>{room.propertyId === 'hotel-a' ? 'Hotel A' : 'Hotel B'} · Floor {room.floor}</span><label>Update status<select value={room.status} onChange={e => changeStatus(room.id,e.target.value)}><option>Clean</option><option>Dirty</option><option>Occupied</option><option>Maintenance</option><option>Inspected</option></select></label></div>)}</div></>;
+
+  async function changeStatus(id: string, status: string) {
+    try {
+      await api.updateRoomStatus(id, status);
+      load();
+    } catch (e: any) {
+      alert(e.message || 'Could not update room status.');
+    }
+  }
+
+  async function saveNote(room: AnyRow) {
+    setSavingNotes(prev => ({ ...prev, [room.id]: true }));
+    try {
+      await api.updateRoomNote(room.id, noteDrafts[room.id] || '');
+      setEditingNotes(prev => ({ ...prev, [room.id]: false }));
+      load();
+    } catch (e: any) {
+      alert(e.message || 'Could not save room note.');
+    } finally {
+      setSavingNotes(prev => ({ ...prev, [room.id]: false }));
+    }
+  }
+
+  const counts = useMemo(() => ({
+    available: rows.filter(r => r.status === 'Clean').length,
+    occupied: rows.filter(r => r.status === 'Occupied').length,
+    dirty: rows.filter(r => r.status === 'Dirty').length,
+    maintenance: rows.filter(r => r.status === 'Maintenance').length,
+    inspected: rows.filter(r => r.status === 'Inspected').length
+  }), [rows]);
+
+  return <>
+    <PageHeader eyebrow="HOTEL OPERATIONS" title="Room management" description="View room availability, update operational status, and maintain room notes." actions={<Button variant="secondary" onClick={load}><RefreshCw size={15}/> Refresh</Button>}/>
+    <div className="mini-stat-grid">
+      <div><span>Clean / available</span><strong>{counts.available}</strong></div>
+      <div><span>Occupied</span><strong>{counts.occupied}</strong></div>
+      <div><span>Needs cleaning</span><strong>{counts.dirty}</strong></div>
+      <div><span>Maintenance</span><strong>{counts.maintenance}</strong></div>
+      <div><span>Inspected</span><strong>{counts.inspected}</strong></div>
+    </div>
+    <div className="toolbar">
+      <SearchBar value={query} onChange={setQuery} placeholder="Search room number or type…"/>
+      <span className="muted">{rows.length} rooms</span>
+    </div>
+    <div className="room-grid">
+      {rows.map(room => <div className={"room-card status-" + room.status.toLowerCase().replace(' ','-')} key={room.id}>
+        <div className="room-card-top">
+          <div className="room-number">{room.number}</div>
+          <select className={"room-status-select status-" + room.status.toLowerCase().replace(" ","-")} aria-label={"Update status for room " + room.number} value={room.status} onChange={e => changeStatus(room.id,e.target.value)}><option>Clean</option><option>Dirty</option><option>Occupied</option><option>Maintenance</option><option>Inspected</option></select>
+        </div>
+        <strong>{room.type}</strong>
+        <span>{room.propertyId === 'hotel-a' ? 'Hotel A' : 'Hotel B'} · Floor {room.floor}</span>
+
+        <div className="room-notes">
+          <strong>Room notes</strong>
+          {editingNotes[room.id] ? <>
+            <textarea
+              value={noteDrafts[room.id] ?? room.note ?? ''}
+              onChange={e => setNoteDrafts(prev => ({ ...prev, [room.id]: e.target.value }))}
+              maxLength={2000}
+              rows={4}
+              placeholder="Add information about this room…"
+            />
+            <span className="muted">{(noteDrafts[room.id] || '').length}/2000 characters</span>
+            <div className="room-note-actions">
+              <Button variant="secondary" onClick={() => {
+                setNoteDrafts(prev => ({ ...prev, [room.id]: room.note || '' }));
+                setEditingNotes(prev => ({ ...prev, [room.id]: false }));
+              }}>Cancel</Button>
+              <Button onClick={() => saveNote(room)}>
+                {savingNotes[room.id] ? 'Saving…' : 'Save note'}
+              </Button>
+            </div>
+          </> : <>
+            <p className="room-note-text">{room.note || 'No note added.'}</p>
+            <Button variant="secondary" onClick={() => setEditingNotes(prev => ({ ...prev, [room.id]: true }))}>
+              {room.note ? 'Edit note' : 'Add note'}
+            </Button>
+          </>}
+        </div>
+      </div>)}
+    </div>
+  </>;
 }
 function Employees() {
   const [rows, setRows] = useState<AnyRow[]>([]); const [query, setQuery] = useState(''); const [open,setOpen] = useState(false);

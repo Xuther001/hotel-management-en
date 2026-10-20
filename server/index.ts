@@ -376,11 +376,64 @@ app.get('/api/v1/reservations', (req, res) => res.json(list(readData().reservati
 app.post('/api/v1/reservations', (req, res) => {
   const d = readData();
   const body = req.body || {};
-  if (!body.guest || !body.checkIn || !body.checkOut || !body.propertyId) return res.status(400).json({ error: 'Guest, check-in, check-out, and property are required.' });
-  if (body.checkOut <= body.checkIn) return res.status(400).json({ error: 'Check-out must be after check-in.' });
+
+  if (!body.guest || !body.checkIn || !body.checkOut || !body.propertyId || !body.room) {
+    return res.status(400).json({ error: 'Guest, hotel, room, check-in, and check-out are required.' });
+  }
+  if (body.checkOut <= body.checkIn) {
+    return res.status(400).json({ error: 'Check-out must be after check-in.' });
+  }
+
+  const room = d.rooms.find((r: AnyRecord) =>
+    String(r.number) === String(body.room) &&
+    r.propertyId === body.propertyId
+  );
+
+  if (!room) {
+    return res.status(400).json({ error: 'The selected room does not belong to this hotel.' });
+  }
+  if (room.status === 'Maintenance') {
+    return res.status(400).json({ error: 'This room is under maintenance and cannot be reserved.' });
+  }
+
+  const conflict = d.reservations.some((r: AnyRecord) => {
+    const status = String(r.status || '').toLowerCase();
+    const isCancelled = status === 'cancelled' || status === 'canceled';
+    return !isCancelled &&
+      r.propertyId === body.propertyId &&
+      String(r.room) === String(body.room) &&
+      r.checkIn < body.checkOut &&
+      r.checkOut > body.checkIn;
+  });
+
+  if (conflict) {
+    return res.status(409).json({
+      error: 'This room is already booked for some or all of those dates. Please choose another room or dates.'
+    });
+  }
+
   const id = `RES-${1053 + d.reservations.length}`;
-  const item = { id, guest: body.guest, room: body.room || 'Unassigned', propertyId: body.propertyId, checkIn: body.checkIn, checkOut: body.checkOut, guests: Number(body.guests || 1), status: 'Confirmed', source: body.source || 'Direct', amount: Number(body.amount || 0) };
-  d.reservations.unshift(item); d.activity.unshift({ id: Date.now(), text: `Reservation ${id} created for ${item.guest}`, by: 'Demo User', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }); writeData(d);
+  const item = {
+    id,
+    guest: String(body.guest).trim(),
+    room: String(body.room),
+    propertyId: body.propertyId,
+    checkIn: body.checkIn,
+    checkOut: body.checkOut,
+    guests: Number(body.guests || 1),
+    status: 'Confirmed',
+    source: body.source || 'Direct',
+    amount: Number(body.amount || 0)
+  };
+
+  d.reservations.unshift(item);
+  d.activity.unshift({
+    id: Date.now(),
+    text: `Reservation ${id} created for ${item.guest}`,
+    by: 'Demo User',
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  });
+  writeData(d);
   res.status(201).json({ data: item });
 });
 app.patch('/api/v1/reservations/:id', (req, res) => {
@@ -396,6 +449,21 @@ app.patch('/api/v1/rooms/:id/status', (req, res) => {
   if (!allowed.includes(req.body.status)) return res.status(400).json({ error: 'Invalid room status.' });
   item.status = req.body.status; writeData(d); res.json({ data: item });
 });
+app.patch('/api/v1/rooms/:id/note', (req, res) => {
+  const d = readData();
+  const item = d.rooms.find((x: AnyRecord) => x.id === req.params.id);
+  if (!item) return res.status(404).json({ error: 'Room not found.' });
+  if (typeof req.body.note !== 'string') {
+    return res.status(400).json({ error: 'Note must be text.' });
+  }
+  if (req.body.note.length > 2000) {
+    return res.status(400).json({ error: 'Room notes cannot exceed 2000 characters.' });
+  }
+  item.note = req.body.note;
+  writeData(d);
+  res.json({ data: item });
+});
+
 app.get('/api/v1/employees', (req, res) => res.json(list(readData().employees, req)));
 app.post('/api/v1/employees', (req, res) => {
   const d = readData(); if (!req.body.name || !req.body.role) return res.status(400).json({ error: 'Name and role are required.' });
