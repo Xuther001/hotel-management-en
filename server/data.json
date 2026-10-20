@@ -19,6 +19,18 @@
   ],
   "reservations": [
     {
+      "id": "RES-1060",
+      "guest": "Kim",
+      "room": "G01",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-20",
+      "checkOut": "2026-10-21",
+      "guests": 2,
+      "status": "Confirmed",
+      "source": "Phone",
+      "amount": 1500000
+    },
+    {
       "id": "RES-1059",
       "guest": "Willy",
       "room": "G01",
@@ -533,6 +545,12 @@
     ]
   },
   "activity": [
+    {
+      "id": 1792479362575,
+      "text": "Reservation RES-1060 created for Kim",
+      "by": "Demo User",
+      "time": "01:56 PM"
+    },
     {
       "id": 1792478760932,
       "text": "Reservation RES-1059 created for Willy",

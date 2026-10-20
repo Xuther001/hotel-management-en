@@ -380,6 +380,12 @@ app.post('/api/v1/reservations', (req, res) => {
   if (!body.guest || !body.checkIn || !body.checkOut || !body.propertyId || !body.room) {
     return res.status(400).json({ error: 'Guest, hotel, room, check-in, and check-out are required.' });
   }
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  if (body.checkIn < today) {
+    return res.status(400).json({ error: 'Check-in cannot be in the past.' });
+  }
   if (body.checkOut <= body.checkIn) {
     return res.status(400).json({ error: 'Check-out must be after check-in.' });
   }
