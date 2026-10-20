@@ -303,30 +303,17 @@ function initialData() {
       { id: 'EMP-002', name: 'Tran Van Duc', role: 'Housekeeping', property: 'Hotel A', status: 'On shift', department: 'Housekeeping', salary: 9000000 },
       { id: 'EMP-003', name: 'Le Thanh Vy', role: 'Hotel Manager', property: 'Hotel B', status: 'On shift', department: 'Management', salary: 22000000 },
       { id: 'EMP-004', name: 'Pham Hoang Nam', role: 'Accountant', property: 'Group', status: 'On leave', department: 'Finance', salary: 16000000 },
-      { id: 'EMP-005', name: 'Vo Thi Lan', role: 'Marketing Executive', property: 'Marketing', status: 'On shift', department: 'Marketing', salary: 14000000 }
     ],
     expenses: [
       { id: 'EXP-021', date: '2026-10-18', category: 'Utilities', property: 'Hotel A', description: 'Electricity bill', amount: 28500000, status: 'Approved' },
       { id: 'EXP-022', date: '2026-10-18', category: 'Supplies', property: 'Hotel B', description: 'Guest amenities', amount: 7400000, status: 'Pending' },
       { id: 'EXP-023', date: '2026-10-17', category: 'Maintenance', property: 'Hotel A', description: 'Air conditioning service', amount: 5200000, status: 'Approved' },
-      { id: 'EXP-024', date: '2026-10-16', category: 'Marketing', property: 'Marketing', description: 'Campaign spend', amount: 12000000, status: 'Approved' }
     ],
     tasks: [
       { id: 'TASK-01', title: 'Inspect room 304 air conditioner', property: 'Hotel A', priority: 'High', status: 'Overdue', assignee: 'Maintenance team' },
       { id: 'TASK-02', title: 'Prepare rooms 303 and 203', property: 'Both hotels', priority: 'Normal', status: 'In progress', assignee: 'Housekeeping' },
       { id: 'TASK-03', title: 'Renew employee contract', property: 'Hotel B', priority: 'Normal', status: 'Pending', assignee: 'HR' }
     ],
-    marketing: {
-      clients: [
-        { id: 'CL-001', name: 'Lotus Retail', service: 'Social media + Ads', status: 'Active', monthlyFee: 25000000 },
-        { id: 'CL-002', name: 'Green Garden Cafe', service: 'Content marketing', status: 'Active', monthlyFee: 12000000 },
-        { id: 'CL-003', name: 'Internal: Hotel A', service: 'Hotel campaigns', status: 'Active', monthlyFee: 0 }
-      ],
-      campaigns: [
-        { id: 'CAM-11', name: 'October Brand Awareness', client: 'Lotus Retail', budget: 18000000, status: 'Running', leads: 124 },
-        { id: 'CAM-12', name: 'Weekend Stay Promotion', client: 'Internal: Hotel A', budget: 8000000, status: 'Running', leads: 46 }
-      ]
-    },
     activity: [
       { id: 1, text: 'Reservation RES-1048 checked in', by: 'Front Desk', time: '09:12' },
       { id: 2, text: 'Expense EXP-022 submitted for approval', by: 'Hotel B', time: '08:45' },
@@ -594,8 +581,6 @@ app.post('/api/v1/finance/expenses', (req, res) => {
   d.expenses.unshift(item); writeData(d); res.status(201).json({ data: item });
 });
 app.get('/api/v1/housekeeping/tasks', (_req, res) => res.json({ data: readData().tasks }));
-app.get('/api/v1/marketing/clients', (_req, res) => res.json({ data: readData().marketing.clients }));
-app.get('/api/v1/marketing/campaigns', (_req, res) => res.json({ data: readData().marketing.campaigns }));
 app.get('/api/v1/audit-logs', (_req, res) => res.json({ data: readData().activity }));
 app.use('/api', (_req, res) => res.status(404).json({ error: 'Simulated endpoint not implemented yet.' }));
 app.listen(4000, () => console.log('Simulated API listening at http://localhost:4000'));

@@ -414,15 +414,6 @@
       "status": "On leave",
       "department": "Finance",
       "salary": 16000000
-    },
-    {
-      "id": "EMP-005",
-      "name": "Vo Thi Lan",
-      "role": "Marketing Executive",
-      "property": "Marketing",
-      "status": "On shift",
-      "department": "Marketing",
-      "salary": 14000000
     }
   ],
   "expenses": [
@@ -452,15 +443,6 @@
       "description": "Air conditioning service",
       "amount": 5200000,
       "status": "Approved"
-    },
-    {
-      "id": "EXP-024",
-      "date": "2026-10-16",
-      "category": "Marketing",
-      "property": "Marketing",
-      "description": "Campaign spend",
-      "amount": 12000000,
-      "status": "Approved"
     }
   ],
   "tasks": [
@@ -489,49 +471,6 @@
       "assignee": "HR"
     }
   ],
-  "marketing": {
-    "clients": [
-      {
-        "id": "CL-001",
-        "name": "Lotus Retail",
-        "service": "Social media + Ads",
-        "status": "Active",
-        "monthlyFee": 25000000
-      },
-      {
-        "id": "CL-002",
-        "name": "Green Garden Cafe",
-        "service": "Content marketing",
-        "status": "Active",
-        "monthlyFee": 12000000
-      },
-      {
-        "id": "CL-003",
-        "name": "Internal: Hotel A",
-        "service": "Hotel campaigns",
-        "status": "Active",
-        "monthlyFee": 0
-      }
-    ],
-    "campaigns": [
-      {
-        "id": "CAM-11",
-        "name": "October Brand Awareness",
-        "client": "Lotus Retail",
-        "budget": 18000000,
-        "status": "Running",
-        "leads": 124
-      },
-      {
-        "id": "CAM-12",
-        "name": "Weekend Stay Promotion",
-        "client": "Internal: Hotel A",
-        "budget": 8000000,
-        "status": "Running",
-        "leads": 46
-      }
-    ]
-  },
   "activity": [
     {
       "id": 1792482881540,

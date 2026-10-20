@@ -23,8 +23,6 @@ export const api = {
   expenses: (q = '') => request<any>(`/finance/expenses?q=${encodeURIComponent(q)}`),
   createExpense: (data: any) => request<any>('/finance/expenses', { method: 'POST', body: JSON.stringify(data) }),
   tasks: () => request<any>('/housekeeping/tasks'),
-  clients: () => request<any>('/marketing/clients'),
-  campaigns: () => request<any>('/marketing/campaigns'),
   activity: () => request<any>('/audit-logs'),
 };
 export const money = (value: number) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(value);
