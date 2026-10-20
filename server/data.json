@@ -358,38 +358,38 @@
     {
       "id": "EMP-001",
       "name": "Nguyen Thi Mai",
-      "role": "Front Desk",
       "property": "Hotel A",
       "status": "On shift",
       "department": "Front Office",
-      "salary": 12000000
+      "salary": 12000000,
+      "jobTitle": "Receptionist"
     },
     {
       "id": "EMP-002",
       "name": "Tran Van Duc",
-      "role": "Housekeeping",
       "property": "Hotel A",
       "status": "On shift",
       "department": "Housekeeping",
-      "salary": 9000000
+      "salary": 9000000,
+      "jobTitle": "Housekeeper"
     },
     {
       "id": "EMP-003",
       "name": "Le Thanh Vy",
-      "role": "Hotel Manager",
       "property": "Hotel B",
       "status": "On shift",
       "department": "Management",
-      "salary": 22000000
+      "salary": 22000000,
+      "jobTitle": "Hotel Manager"
     },
     {
       "id": "EMP-004",
       "name": "Pham Hoang Nam",
-      "role": "Accountant",
       "property": "Group",
       "status": "On leave",
       "department": "Finance",
-      "salary": 16000000
+      "salary": 16000000,
+      "jobTitle": "Accountant"
     }
   ],
   "expenses": [

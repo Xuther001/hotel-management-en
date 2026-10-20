@@ -20,6 +20,7 @@ export const api = {
   updateRoomNote: (id: string, note: string) => request<any>(`/rooms/${id}/note`, { method: 'PATCH', body: JSON.stringify({ note }) }),
   employees: (q = '') => request<any>(`/employees?q=${encodeURIComponent(q)}`),
   createEmployee: (data: any) => request<any>('/employees', { method: 'POST', body: JSON.stringify(data) }),
+  deleteEmployee: (id: string) => request<any>(`/employees/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   expenses: (q = '') => request<any>(`/finance/expenses?q=${encodeURIComponent(q)}`),
   createExpense: (data: any) => request<any>('/finance/expenses', { method: 'POST', body: JSON.stringify(data) }),
   tasks: () => request<any>('/housekeeping/tasks'),

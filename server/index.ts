@@ -299,10 +299,10 @@ function initialData() {
       }
     ],
     employees: [
-      { id: 'EMP-001', name: 'Nguyen Thi Mai', role: 'Front Desk', property: 'Hotel A', status: 'On shift', department: 'Front Office', salary: 12000000 },
-      { id: 'EMP-002', name: 'Tran Van Duc', role: 'Housekeeping', property: 'Hotel A', status: 'On shift', department: 'Housekeeping', salary: 9000000 },
-      { id: 'EMP-003', name: 'Le Thanh Vy', role: 'Hotel Manager', property: 'Hotel B', status: 'On shift', department: 'Management', salary: 22000000 },
-      { id: 'EMP-004', name: 'Pham Hoang Nam', role: 'Accountant', property: 'Group', status: 'On leave', department: 'Finance', salary: 16000000 },
+      { id: 'EMP-001', name: 'Nguyen Thi Mai', jobTitle: 'Receptionist', property: 'Hotel A', status: 'On shift', department: 'Front Office', salary: 12000000 },
+      { id: 'EMP-002', name: 'Tran Van Duc', jobTitle: 'Housekeeper', property: 'Hotel A', status: 'On shift', department: 'Housekeeping', salary: 9000000 },
+      { id: 'EMP-003', name: 'Le Thanh Vy', jobTitle: 'Hotel Manager', property: 'Hotel B', status: 'On shift', department: 'Management', salary: 22000000 },
+      { id: 'EMP-004', name: 'Pham Hoang Nam', jobTitle: 'Accountant', property: 'Group', status: 'On leave', department: 'Finance', salary: 16000000 },
     ],
     expenses: [
       { id: 'EXP-021', date: '2026-10-18', category: 'Utilities', property: 'Hotel A', description: 'Electricity bill', amount: 28500000, status: 'Approved' },
@@ -571,9 +571,17 @@ app.patch('/api/v1/rooms/:id/note', (req, res) => {
 
 app.get('/api/v1/employees', (req, res) => res.json(list(readData().employees, req)));
 app.post('/api/v1/employees', (req, res) => {
-  const d = readData(); if (!req.body.name || !req.body.role) return res.status(400).json({ error: 'Name and role are required.' });
-  const item = { id: `EMP-${String(d.employees.length + 1).padStart(3, '0')}`, name: req.body.name, role: req.body.role, property: req.body.property || 'Group', status: 'Active', department: req.body.department || 'General', salary: Number(req.body.salary || 0) };
+  const d = readData(); if (!req.body.name || !String(req.body.name).trim()) return res.status(400).json({ error: 'Employee name is required.' }); const approvedJobTitles: Record<string, string> = { 'Front Office': 'Receptionist', Housekeeping: 'Housekeeper', Management: 'Hotel Manager', Finance: 'Accountant' }; if (!req.body.department || !Object.prototype.hasOwnProperty.call(approvedJobTitles, req.body.department) || req.body.jobTitle !== approvedJobTitles[req.body.department]) return res.status(400).json({ error: 'Select a valid department and its approved job title.' });
+  const item = { id: `EMP-${String(d.employees.length + 1).padStart(3, '0')}`, name: req.body.name, jobTitle: req.body.jobTitle, property: req.body.property || 'Group', status: 'Active', department: req.body.department || 'General', salary: Number(req.body.salary || 0) };
   d.employees.push(item); writeData(d); res.status(201).json({ data: item });
+});
+app.delete('/api/v1/employees/:id', (req, res) => {
+  const d = readData();
+  const index = d.employees.findIndex((employee: any) => employee.id === req.params.id);
+  if (index === -1) return res.status(404).json({ error: 'Employee not found.' });
+  const [deleted] = d.employees.splice(index, 1);
+  writeData(d);
+  res.json({ data: deleted, message: 'Employee deleted.' });
 });
 app.get('/api/v1/finance/expenses', (req, res) => res.json(list(readData().expenses, req)));
 app.post('/api/v1/finance/expenses', (req, res) => {
