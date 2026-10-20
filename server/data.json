@@ -19,6 +19,18 @@
   ],
   "reservations": [
     {
+      "id": "RES-1057",
+      "guest": "Anh Nguyen",
+      "room": "501",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-23",
+      "checkOut": "2026-10-25",
+      "guests": 1,
+      "status": "Confirmed",
+      "source": "Booking.com",
+      "amount": 3000000
+    },
+    {
       "id": "RES-1060",
       "guest": "Kim",
       "room": "G01",
@@ -43,18 +55,6 @@
       "amount": 1500000
     },
     {
-      "id": "RES-1058",
-      "guest": "Bill Tran",
-      "room": "888",
-      "propertyId": "hotel-a",
-      "checkIn": "2026-10-20",
-      "checkOut": "2026-10-21",
-      "guests": 2,
-      "status": "Confirmed",
-      "source": "Direct",
-      "amount": 1500000
-    },
-    {
       "id": "RES-1048",
       "guest": "Nguyen Minh Anh",
       "room": "305",
@@ -65,30 +65,6 @@
       "status": "Checked in",
       "source": "Direct",
       "amount": 4500000
-    },
-    {
-      "id": "RES-1049",
-      "guest": "Tran Quoc Bao",
-      "room": "212",
-      "propertyId": "hotel-b",
-      "checkIn": "2026-10-19",
-      "checkOut": "2026-10-21",
-      "guests": 1,
-      "status": "Confirmed",
-      "source": "Booking.com",
-      "amount": 2600000
-    },
-    {
-      "id": "RES-1050",
-      "guest": "Le Thu Ha",
-      "room": "408",
-      "propertyId": "hotel-a",
-      "checkIn": "2026-10-19",
-      "checkOut": "2026-10-20",
-      "guests": 2,
-      "status": "Arriving today",
-      "source": "Phone",
-      "amount": 1800000
     },
     {
       "id": "RES-1052",
@@ -472,6 +448,30 @@
     }
   ],
   "activity": [
+    {
+      "id": 1792485556971,
+      "text": "Reservation RES-1057 created for Anh Nguyen",
+      "by": "Demo User",
+      "time": "03:39 PM"
+    },
+    {
+      "id": 1792485445836,
+      "text": "Reservation RES-1058 for Bill Tran permanently deleted",
+      "by": "Demo User",
+      "time": "03:37 PM"
+    },
+    {
+      "id": 1792485442476,
+      "text": "Reservation RES-1049 for Tran Quoc Bao permanently deleted",
+      "by": "Demo User",
+      "time": "03:37 PM"
+    },
+    {
+      "id": 1792485438068,
+      "text": "Reservation RES-1050 for Le Thu Ha permanently deleted",
+      "by": "Demo User",
+      "time": "03:37 PM"
+    },
     {
       "id": 1792482881540,
       "text": "Reservation RES-1051 for Pham Gia Huy permanently deleted",

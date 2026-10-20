@@ -65,7 +65,7 @@ function App() {
       <header className="topbar"><div className="top-left"><button className="icon-button mobile-menu" onClick={() => setSidebarOpen(true)}><Menu size={20}/></button><div className="breadcrumbs">Workspace <span>/</span> <strong>{pageTitle}</strong></div></div><div className="top-actions"><label className="property-filter"><Building2 size={16}/><select value={property} onChange={e => setProperty(e.target.value)}><option value="all">All hotels</option>{properties.map(p => <option value={p.id} key={p.id}>{p.name}</option>)}</select><ChevronDown size={14}/></label><button className="icon-button top-search" onClick={() => document.getElementById('global-search')?.focus()} title="Search"><Search size={18}/></button><button className="icon-button notification" title="Notifications" onClick={() => alert('Demo notifications: 3 maintenance tasks and 2 contract renewals require attention.')}><Bell size={18}/><i/></button><div className="top-divider"/><div className="top-user"><div className="avatar">BO</div><div><strong>Business Owner</strong><span>Owner account</span></div><ChevronDown size={14}/></div></div></header>
       <div className="page-wrap"><Routes>
         <Route path="/" element={<Dashboard property={property}/>} />
-        <Route path="/reservations" element={<Reservations />} />
+        <Route path="/reservations" element={<Reservations property={property} />} />
         <Route path="/rooms" element={<Rooms property={property}/>} />
         <Route path="/employees" element={<Employees />} />
         <Route path="/finance" element={<Finance />} />
@@ -131,11 +131,12 @@ function ReservationTable({ rows, compact = false, onStatusChange, onDelete }: {
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
   return <div className="table-scroll"><table>
-    <thead><tr><th>BOOKING / GUEST</th><th>ROOM</th><th>STAY</th><th>STATUS</th>{!compact && <th>AMOUNT</th>}{!compact && onDelete && <th>ACTIONS</th>}</tr></thead>
+    <thead><tr><th>BOOKING / GUEST</th><th>HOTEL</th><th>ROOM</th><th>STAY</th><th>STATUS</th>{!compact && <th>AMOUNT</th>}{!compact && onDelete && <th>ACTIONS</th>}</tr></thead>
     <tbody>{rows.map(r => {
       const expired = r.checkOut < today;
       return <tr key={r.id}>
         <td><strong>{r.guest}</strong><span className="cell-sub">{r.id} · {r.source}</span></td>
+        <td>{r.propertyId === 'hotel-a' ? 'Hotel A' : r.propertyId === 'hotel-b' ? 'Hotel B' : (r.property || 'Unknown hotel')}</td>
         <td>{r.room}</td>
         <td><span>{r.checkIn}</span><span className="cell-sub">to {r.checkOut}</span></td>
         <td>{!compact && onStatusChange && !expired
@@ -148,7 +149,7 @@ function ReservationTable({ rows, compact = false, onStatusChange, onDelete }: {
     })}</tbody>
   </table></div>;
 }
-function Reservations() {
+function Reservations({ property }: { property: string }) {
   const [rows, setRows] = useState<AnyRow[]>([]);
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
@@ -159,6 +160,13 @@ function Reservations() {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   })();
   const [selectedProperty, setSelectedProperty] = useState('hotel-a');
+  useEffect(() => {
+    if (property !== 'all') {
+      setSelectedProperty(property);
+      setSelectedRoom('');
+    }
+  }, [property]);
+
   const [checkInDate, setCheckInDate] = useState(today);
   const [checkOutDate, setCheckOutDate] = useState(() => {
     const d = new Date();
@@ -170,7 +178,7 @@ function Reservations() {
 
   const load = () => {
     setLoading(true);
-    api.reservations(query).then(r => setRows(r.data))
+    api.reservations(query, property).then(r => setRows(r.data))
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   };
@@ -218,7 +226,7 @@ function Reservations() {
     }
   }
 
-  useEffect(() => { load(); }, [query]);
+  useEffect(() => { load(); }, [query, property]);
 
   useEffect(() => {
     if (!open) return;
