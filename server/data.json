@@ -26,7 +26,7 @@
       "checkIn": "2026-10-20",
       "checkOut": "2026-10-21",
       "guests": 2,
-      "status": "Confirmed",
+      "status": "Checked out",
       "source": "Phone",
       "amount": 1500000
     },
@@ -121,7 +121,7 @@
       "number": "G01",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
+      "status": "Dirty",
       "floor": "G",
       "note": ""
     },
@@ -545,6 +545,126 @@
     ]
   },
   "activity": [
+    {
+      "id": 1792481241381,
+      "text": "Reservation RES-1060 status updated to Checked out",
+      "by": "Demo User",
+      "time": "02:27 PM"
+    },
+    {
+      "id": 1792481235917,
+      "text": "Reservation RES-1060 status updated to Checked in",
+      "by": "Demo User",
+      "time": "02:27 PM"
+    },
+    {
+      "id": 1792481232933,
+      "text": "Reservation RES-1060 status updated to No-show",
+      "by": "Demo User",
+      "time": "02:27 PM"
+    },
+    {
+      "id": 1792481231653,
+      "text": "Reservation RES-1060 status updated to Cancelled",
+      "by": "Demo User",
+      "time": "02:27 PM"
+    },
+    {
+      "id": 1792481230526,
+      "text": "Reservation RES-1060 status updated to Confirmed",
+      "by": "Demo User",
+      "time": "02:27 PM"
+    },
+    {
+      "id": 1792481229381,
+      "text": "Reservation RES-1060 status updated to Arriving today",
+      "by": "Demo User",
+      "time": "02:27 PM"
+    },
+    {
+      "id": 1792480881373,
+      "text": "Reservation RES-1060 status updated to Cancelled",
+      "by": "Demo User",
+      "time": "02:21 PM"
+    },
+    {
+      "id": 1792480858148,
+      "text": "Reservation RES-1060 status updated to Checked out",
+      "by": "Demo User",
+      "time": "02:20 PM"
+    },
+    {
+      "id": 1792480852396,
+      "text": "Reservation RES-1060 status updated to Checked in",
+      "by": "Demo User",
+      "time": "02:20 PM"
+    },
+    {
+      "id": 1792480834379,
+      "text": "Reservation RES-1060 status updated to Confirmed",
+      "by": "Demo User",
+      "time": "02:20 PM"
+    },
+    {
+      "id": 1792480755809,
+      "text": "Reservation RES-1060 status updated to Cancelled",
+      "by": "Demo User",
+      "time": "02:19 PM"
+    },
+    {
+      "id": 1792480728642,
+      "text": "Reservation RES-1060 status updated to Checked in",
+      "by": "Demo User",
+      "time": "02:18 PM"
+    },
+    {
+      "id": 1792480716729,
+      "text": "Reservation RES-1060 status updated to Arriving today",
+      "by": "Demo User",
+      "time": "02:18 PM"
+    },
+    {
+      "id": 1792480707296,
+      "text": "Reservation RES-1060 status updated to Confirmed",
+      "by": "Demo User",
+      "time": "02:18 PM"
+    },
+    {
+      "id": 1792480672679,
+      "text": "Reservation RES-1060 status updated to Arriving today",
+      "by": "Demo User",
+      "time": "02:17 PM"
+    },
+    {
+      "id": 1792480516519,
+      "text": "Reservation RES-1060 status updated to Confirmed",
+      "by": "Demo User",
+      "time": "02:15 PM"
+    },
+    {
+      "id": 1792480511703,
+      "text": "Reservation RES-1060 status updated to Cancelled",
+      "by": "Demo User",
+      "time": "02:15 PM"
+    },
+    {
+      "id": 1792480489321,
+      "text": "Reservation RES-1060 status updated to Checked out",
+      "by": "Demo User",
+      "time": "02:14 PM"
+    },
+    {
+      "id": 1792480479151,
+      "text": "Reservation RES-1059 status updated to Confirmed",
+      "by": "Demo User",
+      "time": "02:14 PM"
+    },
+    {
+      "id": 1792480440692,
+      "text": "Reservation RES-1059 status updated to Checked out",
+      "by": "Demo User",
+      "time": "02:14 PM"
+    },
     {
       "id": 1792479362575,
       "text": "Reservation RES-1060 created for Kim",
