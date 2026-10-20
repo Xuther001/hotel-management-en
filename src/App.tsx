@@ -14,6 +14,7 @@ const navGroups = [
   { label: 'WORKSPACE', items: [
     { to: '/', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/reservations', label: 'Reservations', icon: CalendarDays },
+    { to: '/reservation-calendar', label: 'Reservation Calendar', icon: CalendarCheck },
     { to: '/rooms', label: 'Room management', icon: BedDouble },
   ]},
   { label: 'OPERATIONS', items: [
@@ -29,7 +30,7 @@ const navGroups = [
   ]}
 ];
 const titleMap: Record<string, string> = {
-  '/': 'Business overview', '/reservations': 'Reservations', '/rooms': 'Room management',
+  '/': 'Business overview', '/reservations': 'Reservations', '/reservation-calendar': 'Reservation Calendar', '/rooms': 'Room management',
   '/employees': 'Human resources', '/finance': 'Finance & expenses', '/inventory': 'Inventory',
   '/maintenance': 'Maintenance', '/reports': 'Reports & analytics', '/settings': 'Settings'
 };
@@ -66,6 +67,7 @@ function App() {
       <div className="page-wrap"><Routes>
         <Route path="/" element={<Dashboard property={property}/>} />
         <Route path="/reservations" element={<Reservations property={property} />} />
+        <Route path="/reservation-calendar" element={<ReservationCalendar property={property} />} />
         <Route path="/rooms" element={<Rooms property={property}/>} />
         <Route path="/employees" element={<Employees />} />
         <Route path="/finance" element={<Finance />} />
@@ -149,6 +151,172 @@ function ReservationTable({ rows, compact = false, onStatusChange, onDelete }: {
     })}</tbody>
   </table></div>;
 }
+
+function ReservationCalendar({ property }: { property: string }) {
+  const [rows, setRows] = useState<AnyRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [month, setMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
+
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    api.reservations('', property)
+      .then(r => {
+        if (active) {
+          setRows(r.data || []);
+          setError('');
+        }
+      })
+      .catch(e => {
+        if (active) setError(e.message || 'Could not load reservations.');
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => { active = false; };
+  }, [property]);
+
+  const dateKey = (date: Date) =>
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
+  const today = dateKey(new Date());
+  const firstDay = new Date(month.getFullYear(), month.getMonth(), 1);
+  const gridStart = new Date(
+    firstDay.getFullYear(),
+    firstDay.getMonth(),
+    1 - ((firstDay.getDay() + 6) % 7)
+  );
+  const days = Array.from({ length: 42 }, (_, i) =>
+    new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i)
+  );
+
+  const activeRows = rows.filter(r =>
+    !['cancelled', 'no-show', 'noshow'].includes(String(r.status || '').toLowerCase())
+  );
+
+  const eventsFor = (date: string) => {
+    const events: { row: AnyRow; type: 'in' | 'out' }[] = [];
+    activeRows.forEach(r => {
+      if (r.checkIn === date) events.push({ row: r, type: 'in' });
+      if (r.checkOut === date) events.push({ row: r, type: 'out' });
+    });
+    return events.sort((a, b) =>
+      String(a.row.room || '').localeCompare(String(b.row.room || ''), undefined, { numeric: true })
+    );
+  };
+
+  const monthLabel = month.toLocaleDateString('en-GB', {
+    month: 'long',
+    year: 'numeric'
+  });
+
+  return <>
+    <PageHeader
+      eyebrow="FRONT DESK"
+      title="Reservation Calendar"
+      description="See guest arrivals and departures by date and room across your selected hotels."
+      actions={
+        <Button variant="secondary" onClick={() => setMonth(new Date(new Date().getFullYear(), new Date().getMonth(), 1))}>
+          <CalendarDays size={15}/> Today
+        </Button>
+      }
+    />
+
+    <Panel title={monthLabel} subtitle="Each entry shows the room number and guest name."
+      action={
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Button variant="secondary" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}>
+            ← Previous
+          </Button>
+          <Button variant="secondary" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}>
+            Next →
+          </Button>
+        </div>
+      }
+    >
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginBottom: 16, fontSize: 13 }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ width: 10, height: 10, borderRadius: 3, background: '#2563eb' }}/>
+          Check-in
+        </span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ width: 10, height: 10, borderRadius: 3, background: '#ea580c' }}/>
+          Check-out
+        </span>
+        <span style={{ color: 'var(--muted, #64748b)' }}>Use the hotel selector at the top to filter the calendar.</span>
+      </div>
+
+      {error && <div className="notice error">{error}</div>}
+      {loading ? <div className="loading"><RefreshCw className="spin"/> Loading reservations…</div> : (
+        <>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gap: 1, background: 'var(--border, #e2e8f0)', border: '1px solid var(--border, #e2e8f0)' }}>
+            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+              <div key={day} style={{ background: 'var(--panel, #f8fafc)', padding: '10px 4px', textAlign: 'center', fontSize: 12, fontWeight: 700 }}>
+                {day}
+              </div>
+            ))}
+            {days.map(day => {
+              const key = dateKey(day);
+              const inMonth = day.getMonth() === month.getMonth();
+              const isToday = key === today;
+              const events = eventsFor(key);
+              return (
+                <div key={key} style={{
+                  background: 'var(--surface, white)',
+                  minWidth: 0,
+                  minHeight: 112,
+                  padding: 5,
+                  opacity: inMonth ? 1 : 0.48,
+                  outline: isToday ? '2px solid #2563eb' : undefined,
+                  outlineOffset: -2
+                }}>
+                  <div style={{
+                    fontSize: 12,
+                    fontWeight: isToday ? 800 : 600,
+                    marginBottom: 5,
+                    color: isToday ? '#2563eb' : 'inherit'
+                  }}>
+                    {day.getDate()}{isToday ? ' · Today' : ''}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    {events.slice(0, 4).map((event, index) => (
+                      <div key={`${event.row.id}-${event.type}-${index}`} title={`${event.type === 'in' ? 'Check-in' : 'Check-out'} · Room ${event.row.room} · ${event.row.guest}`} style={{
+                        background: event.type === 'in' ? '#dbeafe' : '#ffedd5',
+                        color: event.type === 'in' ? '#1d4ed8' : '#9a3412',
+                        borderLeft: `3px solid ${event.type === 'in' ? '#2563eb' : '#ea580c'}`,
+                        borderRadius: 3,
+                        padding: '4px 3px',
+                        fontSize: 11,
+                        lineHeight: 1.35,
+                        overflowWrap: 'anywhere'
+                      }}>
+                        <strong>{event.type === 'in' ? 'IN' : 'OUT'} · {event.row.room}</strong>
+                        <div>{event.row.guest}</div>
+                      </div>
+                    ))}
+                    {events.length > 4 && (
+                      <div style={{ fontSize: 11, color: 'var(--muted, #64748b)' }}>
+                        +{events.length - 4} more
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ marginTop: 12, fontSize: 12, color: 'var(--muted, #64748b)' }}>
+            {activeRows.length} active reservations · {activeRows.filter(r => r.checkIn === today).length} check-ins today · {activeRows.filter(r => r.checkOut === today).length} check-outs today
+          </div>
+        </>
+      )}
+    </Panel>
+  </>;
+}
+
 function Reservations({ property }: { property: string }) {
   const [rows, setRows] = useState<AnyRow[]>([]);
   const [query, setQuery] = useState('');
@@ -232,33 +400,19 @@ function Reservations({ property }: { property: string }) {
     if (!open) return;
     let active = true;
 
-    if (!checkInDate || !checkOutDate || checkOutDate <= checkInDate) {
-      setRoomOptions([]);
-      setSelectedRoom('');
-      return;
-    }
-
-    Promise.all([api.rooms(), api.reservations()])
-      .then(([roomResult, reservationResult]) => {
+    api.rooms()
+      .then(roomResult => {
         if (!active) return;
 
-        const available = roomResult.data.filter((room: AnyRow) =>
-          room.propertyId === selectedProperty &&
-          room.status !== 'Maintenance' &&
-          !reservationResult.data.some((reservation: AnyRow) => {
-            const status = String(reservation.status || '').toLowerCase();
-            const cancelled = status === 'cancelled' || status === 'canceled';
-            return !cancelled &&
-              reservation.propertyId === selectedProperty &&
-              String(reservation.room) === String(room.number) &&
-              reservation.checkIn < checkOutDate &&
-              reservation.checkOut > checkInDate;
-          })
+        // Show every room in the selected hotel.
+        // Booking conflicts and maintenance restrictions are validated by the backend.
+        const rooms = roomResult.data.filter(
+          (room: AnyRow) => room.propertyId === selectedProperty
         );
 
-        setRoomOptions(available);
+        setRoomOptions(rooms);
         setSelectedRoom(current =>
-          available.some((room: AnyRow) => String(room.number) === current)
+          rooms.some((room: AnyRow) => String(room.number) === current)
             ? current
             : ''
         );
@@ -268,8 +422,7 @@ function Reservations({ property }: { property: string }) {
       });
 
     return () => { active = false; };
-  }, [open, selectedProperty, checkInDate, checkOutDate]);
-  async function submit(e: FormEvent<HTMLFormElement>) { e.preventDefault(); const f = new FormData(e.currentTarget); try { await api.createReservation({ guest:f.get('guest'), propertyId:f.get('propertyId'), room:f.get('room'), checkIn:f.get('checkIn'), checkOut:f.get('checkOut'), guests:f.get('guests'), amount:f.get('amount'), source:f.get('source') }); setOpen(false); load(); } catch(e:any) { alert(e.message); } }
+  }, [open, selectedProperty]);  async function submit(e: FormEvent<HTMLFormElement>) { e.preventDefault(); const f = new FormData(e.currentTarget); try { await api.createReservation({ guest:f.get('guest'), propertyId:f.get('propertyId'), room:f.get('room'), checkIn:f.get('checkIn'), checkOut:f.get('checkOut'), guests:f.get('guests'), amount:f.get('amount'), source:f.get('source') }); setOpen(false); load(); } catch(e:any) { alert(e.message); } }
   return <><PageHeader eyebrow="HOTEL OPERATIONS" title="Reservations" description="Manage guest bookings, stay dates, and booking status." actions={<Button onClick={() => setOpen(true)}><Plus size={16}/> New reservation</Button>}/><div className="toolbar"><SearchBar value={query} onChange={setQuery} placeholder="Search guest, booking ID, source…"/><div className="toolbar-right"><Badge tone="info">{rows.length} bookings</Badge><Button variant="secondary" onClick={load}><RefreshCw size={15}/> Refresh</Button></div></div>{error && <div className="notice error">{error}</div>}<Panel title="All reservations" subtitle="Sample bookings from the simulated API">{loading ? <div className="loading">Loading reservations…</div> : <ReservationTable rows={rows} onStatusChange={changeReservationStatus} onDelete={deleteReservation}/>}</Panel>{open && <Modal title="Create reservation" onClose={() => setOpen(false)}><form className="form-grid" onSubmit={submit}><label className="span-2">Guest full name<input name="guest" required placeholder="Enter guest name"/></label><label>Hotel<select name="propertyId" value={selectedProperty} onChange={e => { setSelectedProperty(e.target.value); setSelectedRoom(""); }}><option value="hotel-a">Hotel A</option><option value="hotel-b">Hotel B</option></select></label><label>Room number<select name="room" required value={selectedRoom} onChange={e => setSelectedRoom(e.target.value)}><option value="">Select an available room</option>{roomOptions.map((room: AnyRow) => <option key={room.id} value={room.number}>{room.number} · {room.type} · Floor {room.floor}</option>)}</select>{roomOptions.length === 0 && <small>No rooms available for these dates.</small>}</label><label>Check-in<input type="date" name="checkIn" required min={today} value={checkInDate} onChange={e => setCheckInDate(e.target.value)} /></label><label>Check-out<input type="date" name="checkOut" required min={checkInDate || undefined} value={checkOutDate} onChange={e => setCheckOutDate(e.target.value)} /></label><label>Guests<input type="number" name="guests" min="1" defaultValue="2"/></label><label>Amount (VND)<input type="number" name="amount" min="0" defaultValue="1500000"/></label><label className="span-2">Booking source<select name="source"><option>Direct</option><option>Phone</option><option>Walk-in</option><option>Booking.com</option><option>Agoda</option><option>Travel agent</option></select></label><div className="form-actions span-2"><Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button><Button type="submit">Create reservation</Button></div></form></Modal>}</>;
 }
 function Rooms({ property }: { property: string }) {

@@ -19,64 +19,28 @@
   ],
   "reservations": [
     {
-      "id": "RES-1057",
-      "guest": "Anh Nguyen",
-      "room": "501",
-      "propertyId": "hotel-a",
-      "checkIn": "2026-10-23",
-      "checkOut": "2026-10-25",
-      "guests": 1,
-      "status": "Confirmed",
-      "source": "Booking.com",
-      "amount": 3000000
-    },
-    {
-      "id": "RES-1060",
-      "guest": "Kim",
+      "id": "RES-1054",
+      "guest": "Stacy Vo",
       "room": "G01",
-      "propertyId": "hotel-a",
-      "checkIn": "2026-10-20",
-      "checkOut": "2026-10-21",
-      "guests": 2,
-      "status": "Checked out",
-      "source": "Phone",
-      "amount": 1500000
-    },
-    {
-      "id": "RES-1059",
-      "guest": "Willy",
-      "room": "G01",
-      "propertyId": "hotel-a",
-      "checkIn": "2026-10-13",
-      "checkOut": "2026-10-15",
-      "guests": 2,
-      "status": "Arriving today",
-      "source": "Direct",
-      "amount": 1500000
-    },
-    {
-      "id": "RES-1048",
-      "guest": "Nguyen Minh Anh",
-      "room": "305",
-      "propertyId": "hotel-a",
-      "checkIn": "2026-10-19",
-      "checkOut": "2026-10-22",
-      "guests": 2,
-      "status": "Checked in",
-      "source": "Direct",
-      "amount": 4500000
-    },
-    {
-      "id": "RES-1052",
-      "guest": "Vo Ngoc Linh",
-      "room": "501",
       "propertyId": "hotel-a",
       "checkIn": "2026-10-21",
       "checkOut": "2026-10-23",
       "guests": 2,
       "status": "Confirmed",
       "source": "Direct",
-      "amount": 3100000
+      "amount": 1500000
+    },
+    {
+      "id": "RES-1053",
+      "guest": "Tien Nguyen",
+      "room": "G01",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-20",
+      "checkOut": "2026-10-21",
+      "guests": 2,
+      "status": "Confirmed",
+      "source": "Direct",
+      "amount": 1500000
     }
   ],
   "rooms": [
@@ -102,7 +66,7 @@
       "number": "101",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
+      "status": "Maintenance",
       "floor": 1
     },
     {
@@ -448,6 +412,108 @@
     }
   ],
   "activity": [
+    {
+      "id": 1792514606683,
+      "text": "Reservation RES-1054 created for Stacy Vo",
+      "by": "Demo User",
+      "time": "11:43 PM"
+    },
+    {
+      "id": 1792513079355,
+      "text": "Reservation RES-1053 created for Tien Nguyen",
+      "by": "Demo User",
+      "time": "11:17 PM"
+    },
+    {
+      "id": 1792512733131,
+      "text": "Reservation RES-1053 for Tien Nguyen permanently deleted",
+      "by": "Demo User",
+      "time": "11:12 PM"
+    },
+    {
+      "id": 1792512517638,
+      "text": "Reservation RES-1053 created for Tien Nguyen",
+      "by": "Demo User",
+      "time": "11:08 PM"
+    },
+    {
+      "id": 1792511620959,
+      "text": "Reservation RES-1058 for Tien Nguyen permanently deleted",
+      "by": "Demo User",
+      "time": "10:53 PM"
+    },
+    {
+      "id": 1792511619033,
+      "text": "Reservation RES-1057 for Anh Nguyen permanently deleted",
+      "by": "Demo User",
+      "time": "10:53 PM"
+    },
+    {
+      "id": 1792511617328,
+      "text": "Reservation RES-1060 for Kim permanently deleted",
+      "by": "Demo User",
+      "time": "10:53 PM"
+    },
+    {
+      "id": 1792511615488,
+      "text": "Reservation RES-1059 for Willy permanently deleted",
+      "by": "Demo User",
+      "time": "10:53 PM"
+    },
+    {
+      "id": 1792511613824,
+      "text": "Reservation RES-1048 for Nguyen Minh Anh permanently deleted",
+      "by": "Demo User",
+      "time": "10:53 PM"
+    },
+    {
+      "id": 1792511611753,
+      "text": "Reservation RES-1052 for Vo Ngoc Linh permanently deleted",
+      "by": "Demo User",
+      "time": "10:53 PM"
+    },
+    {
+      "id": 1792511370785,
+      "text": "Reservation RES-1058 status updated to Checked out",
+      "by": "Demo User",
+      "time": "10:49 PM"
+    },
+    {
+      "id": 1792511336393,
+      "text": "Reservation RES-1058 status updated to Checked in",
+      "by": "Demo User",
+      "time": "10:48 PM"
+    },
+    {
+      "id": 1792511301801,
+      "text": "Reservation RES-1058 status updated to Cancelled",
+      "by": "Demo User",
+      "time": "10:48 PM"
+    },
+    {
+      "id": 1792511298153,
+      "text": "Reservation RES-1058 status updated to No-show",
+      "by": "Demo User",
+      "time": "10:48 PM"
+    },
+    {
+      "id": 1792511295985,
+      "text": "Reservation RES-1058 status updated to Cancelled",
+      "by": "Demo User",
+      "time": "10:48 PM"
+    },
+    {
+      "id": 1792511293826,
+      "text": "Reservation RES-1058 status updated to Arriving today",
+      "by": "Demo User",
+      "time": "10:48 PM"
+    },
+    {
+      "id": 1792511033676,
+      "text": "Reservation RES-1058 created for Tien Nguyen",
+      "by": "Demo User",
+      "time": "10:43 PM"
+    },
     {
       "id": 1792485556971,
       "text": "Reservation RES-1057 created for Anh Nguyen",

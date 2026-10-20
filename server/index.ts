@@ -391,10 +391,10 @@ app.post('/api/v1/reservations', (req, res) => {
     return res.status(400).json({ error: 'This room is under maintenance and cannot be reserved.' });
   }
 
-  const conflict = d.reservations.some((r: AnyRecord) => {
+  const conflict = d.reservations.find((r: AnyRecord) => {
     const status = String(r.status || '').toLowerCase();
-    const isCancelled = ['cancelled', 'canceled', 'no-show', 'no show'].includes(status);
-    return !isCancelled &&
+    const released = ['cancelled', 'canceled', 'no-show', 'no show'].includes(status);
+    return !released &&
       r.propertyId === body.propertyId &&
       String(r.room) === String(body.room) &&
       r.checkIn < body.checkOut &&
@@ -403,7 +403,7 @@ app.post('/api/v1/reservations', (req, res) => {
 
   if (conflict) {
     return res.status(409).json({
-      error: 'This room is already booked for some or all of those dates. Please choose another room or dates.'
+      error: `Cannot create reservation: Room ${body.room} is already reserved for ${conflict.guest} (${conflict.checkIn} to ${conflict.checkOut}). Your requested stay is ${body.checkIn} to ${body.checkOut}. Please choose another room or dates.`
     });
   }
 
