@@ -1,0 +1,356 @@
+{
+  "properties": [
+    {
+      "id": "hotel-a",
+      "name": "Hotel A",
+      "city": "Ho Chi Minh City",
+      "rooms": 80,
+      "occupancy": 82,
+      "revenue": 1400000000
+    },
+    {
+      "id": "hotel-b",
+      "name": "Hotel B",
+      "city": "Ho Chi Minh City",
+      "rooms": 60,
+      "occupancy": 69,
+      "revenue": 1000000000
+    }
+  ],
+  "reservations": [
+    {
+      "id": "RES-1058",
+      "guest": "Bill Tran",
+      "room": "888",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-20",
+      "checkOut": "2026-10-21",
+      "guests": 2,
+      "status": "Confirmed",
+      "source": "Direct",
+      "amount": 1500000
+    },
+    {
+      "id": "RES-1048",
+      "guest": "Nguyen Minh Anh",
+      "room": "305",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-19",
+      "checkOut": "2026-10-22",
+      "guests": 2,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 4500000
+    },
+    {
+      "id": "RES-1049",
+      "guest": "Tran Quoc Bao",
+      "room": "212",
+      "propertyId": "hotel-b",
+      "checkIn": "2026-10-19",
+      "checkOut": "2026-10-21",
+      "guests": 1,
+      "status": "Confirmed",
+      "source": "Booking.com",
+      "amount": 2600000
+    },
+    {
+      "id": "RES-1050",
+      "guest": "Le Thu Ha",
+      "room": "408",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-19",
+      "checkOut": "2026-10-20",
+      "guests": 2,
+      "status": "Arriving today",
+      "source": "Phone",
+      "amount": 1800000
+    },
+    {
+      "id": "RES-1051",
+      "guest": "Pham Gia Huy",
+      "room": "118",
+      "propertyId": "hotel-b",
+      "checkIn": "2026-10-20",
+      "checkOut": "2026-10-24",
+      "guests": 3,
+      "status": "Confirmed",
+      "source": "Agoda",
+      "amount": 5200000
+    },
+    {
+      "id": "RES-1052",
+      "guest": "Vo Ngoc Linh",
+      "room": "501",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-21",
+      "checkOut": "2026-10-23",
+      "guests": 2,
+      "status": "Confirmed",
+      "source": "Direct",
+      "amount": 3100000
+    }
+  ],
+  "rooms": [
+    {
+      "id": "A-301",
+      "number": "301",
+      "type": "Deluxe King",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 3
+    },
+    {
+      "id": "A-302",
+      "number": "302",
+      "type": "Twin Deluxe",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 3
+    },
+    {
+      "id": "A-303",
+      "number": "303",
+      "type": "Superior Queen",
+      "propertyId": "hotel-a",
+      "status": "Dirty",
+      "floor": 3
+    },
+    {
+      "id": "A-304",
+      "number": "304",
+      "type": "Deluxe King",
+      "propertyId": "hotel-a",
+      "status": "Maintenance",
+      "floor": 3
+    },
+    {
+      "id": "A-401",
+      "number": "401",
+      "type": "Suite",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 4
+    },
+    {
+      "id": "B-201",
+      "number": "201",
+      "type": "Superior Queen",
+      "propertyId": "hotel-b",
+      "status": "Occupied",
+      "floor": 2
+    },
+    {
+      "id": "B-202",
+      "number": "202",
+      "type": "Twin Deluxe",
+      "propertyId": "hotel-b",
+      "status": "Clean",
+      "floor": 2
+    },
+    {
+      "id": "B-203",
+      "number": "203",
+      "type": "Deluxe King",
+      "propertyId": "hotel-b",
+      "status": "Dirty",
+      "floor": 2
+    },
+    {
+      "id": "B-301",
+      "number": "301",
+      "type": "Suite",
+      "propertyId": "hotel-b",
+      "status": "Occupied",
+      "floor": 3
+    },
+    {
+      "id": "B-302",
+      "number": "302",
+      "type": "Deluxe King",
+      "propertyId": "hotel-b",
+      "status": "Clean",
+      "floor": 3
+    }
+  ],
+  "employees": [
+    {
+      "id": "EMP-001",
+      "name": "Nguyen Thi Mai",
+      "role": "Front Desk",
+      "property": "Hotel A",
+      "status": "On shift",
+      "department": "Front Office",
+      "salary": 12000000
+    },
+    {
+      "id": "EMP-002",
+      "name": "Tran Van Duc",
+      "role": "Housekeeping",
+      "property": "Hotel A",
+      "status": "On shift",
+      "department": "Housekeeping",
+      "salary": 9000000
+    },
+    {
+      "id": "EMP-003",
+      "name": "Le Thanh Vy",
+      "role": "Hotel Manager",
+      "property": "Hotel B",
+      "status": "On shift",
+      "department": "Management",
+      "salary": 22000000
+    },
+    {
+      "id": "EMP-004",
+      "name": "Pham Hoang Nam",
+      "role": "Accountant",
+      "property": "Group",
+      "status": "On leave",
+      "department": "Finance",
+      "salary": 16000000
+    },
+    {
+      "id": "EMP-005",
+      "name": "Vo Thi Lan",
+      "role": "Marketing Executive",
+      "property": "Marketing",
+      "status": "On shift",
+      "department": "Marketing",
+      "salary": 14000000
+    }
+  ],
+  "expenses": [
+    {
+      "id": "EXP-021",
+      "date": "2026-10-18",
+      "category": "Utilities",
+      "property": "Hotel A",
+      "description": "Electricity bill",
+      "amount": 28500000,
+      "status": "Approved"
+    },
+    {
+      "id": "EXP-022",
+      "date": "2026-10-18",
+      "category": "Supplies",
+      "property": "Hotel B",
+      "description": "Guest amenities",
+      "amount": 7400000,
+      "status": "Pending"
+    },
+    {
+      "id": "EXP-023",
+      "date": "2026-10-17",
+      "category": "Maintenance",
+      "property": "Hotel A",
+      "description": "Air conditioning service",
+      "amount": 5200000,
+      "status": "Approved"
+    },
+    {
+      "id": "EXP-024",
+      "date": "2026-10-16",
+      "category": "Marketing",
+      "property": "Marketing",
+      "description": "Campaign spend",
+      "amount": 12000000,
+      "status": "Approved"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-01",
+      "title": "Inspect room 304 air conditioner",
+      "property": "Hotel A",
+      "priority": "High",
+      "status": "Overdue",
+      "assignee": "Maintenance team"
+    },
+    {
+      "id": "TASK-02",
+      "title": "Prepare rooms 303 and 203",
+      "property": "Both hotels",
+      "priority": "Normal",
+      "status": "In progress",
+      "assignee": "Housekeeping"
+    },
+    {
+      "id": "TASK-03",
+      "title": "Renew employee contract",
+      "property": "Hotel B",
+      "priority": "Normal",
+      "status": "Pending",
+      "assignee": "HR"
+    }
+  ],
+  "marketing": {
+    "clients": [
+      {
+        "id": "CL-001",
+        "name": "Lotus Retail",
+        "service": "Social media + Ads",
+        "status": "Active",
+        "monthlyFee": 25000000
+      },
+      {
+        "id": "CL-002",
+        "name": "Green Garden Cafe",
+        "service": "Content marketing",
+        "status": "Active",
+        "monthlyFee": 12000000
+      },
+      {
+        "id": "CL-003",
+        "name": "Internal: Hotel A",
+        "service": "Hotel campaigns",
+        "status": "Active",
+        "monthlyFee": 0
+      }
+    ],
+    "campaigns": [
+      {
+        "id": "CAM-11",
+        "name": "October Brand Awareness",
+        "client": "Lotus Retail",
+        "budget": 18000000,
+        "status": "Running",
+        "leads": 124
+      },
+      {
+        "id": "CAM-12",
+        "name": "Weekend Stay Promotion",
+        "client": "Internal: Hotel A",
+        "budget": 8000000,
+        "status": "Running",
+        "leads": 46
+      }
+    ]
+  },
+  "activity": [
+    {
+      "id": 1792378799695,
+      "text": "Reservation RES-1058 created for Bill Tran",
+      "by": "Demo User",
+      "time": "09:59 AM"
+    },
+    {
+      "id": 1,
+      "text": "Reservation RES-1048 checked in",
+      "by": "Front Desk",
+      "time": "09:12"
+    },
+    {
+      "id": 2,
+      "text": "Expense EXP-022 submitted for approval",
+      "by": "Hotel B",
+      "time": "08:45"
+    },
+    {
+      "id": 3,
+      "text": "Room 303 marked for cleaning",
+      "by": "Housekeeping",
+      "time": "08:20"
+    }
+  ]
+}
