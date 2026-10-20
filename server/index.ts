@@ -531,6 +531,32 @@ app.patch('/api/v1/reservations/:id', (req, res) => {
   writeData(d);
   res.json({ data: item });
 });
+app.delete('/api/v1/reservations/:id', (req, res) => {
+  const d = readData();
+  const index = d.reservations.findIndex(
+    (x: AnyRecord) => x.id === req.params.id
+  );
+
+  if (index === -1) {
+    return res.status(404).json({ error: 'Reservation not found.' });
+  }
+
+  const [deleted] = d.reservations.splice(index, 1);
+
+  d.activity.unshift({
+    id: Date.now(),
+    text: `Reservation ${deleted.id} for ${deleted.guest} permanently deleted`,
+    by: 'Demo User',
+    time: new Date().toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  });
+
+  writeData(d);
+  res.json({ message: 'Reservation permanently deleted.', data: deleted });
+});
+
 app.get('/api/v1/rooms', (req, res) => res.json(list(readData().rooms, req)));
 app.patch('/api/v1/rooms/:id/status', (req, res) => {
   const d = readData(); const item = d.rooms.find((x: AnyRecord) => x.id === req.params.id);

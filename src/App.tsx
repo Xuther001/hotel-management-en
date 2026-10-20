@@ -124,10 +124,29 @@ function Dashboard({ property }: { property: string }) {
 function SearchBar({ value, onChange, placeholder = 'Search records...' }: { value: string; onChange: (v:string)=>void; placeholder?: string }) {
   return <label className="search-box"><Search size={17}/><input id="global-search" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}/>{value && <button type="button" onClick={() => onChange('')}><X size={14}/></button>}</label>;
 }
-function ReservationTable({ rows, compact = false, onStatusChange }: { rows: AnyRow[]; compact?: boolean; onStatusChange?: (id: string, status: string) => void }) {
+function ReservationTable({ rows, compact = false, onStatusChange, onDelete }: { rows: AnyRow[]; compact?: boolean; onStatusChange?: (id: string, status: string) => void; onDelete?: (id: string, guest: string) => void }) {
   if (!rows.length) return <EmptyState title="No reservations found" text="Try changing your search or add a reservation."/>;
   const statuses = ['Confirmed', 'Arriving today', 'Checked in', 'Checked out', 'Cancelled', 'No-show'];
-  return <div className="table-scroll"><table><thead><tr><th>BOOKING / GUEST</th><th>ROOM</th><th>STAY</th><th>STATUS</th>{!compact && <th>AMOUNT</th>}</tr></thead><tbody>{rows.map(r => <tr key={r.id}><td><strong>{r.guest}</strong><span className="cell-sub">{r.id} · {r.source}</span></td><td>{r.room}</td><td><span>{r.checkIn}</span><span className="cell-sub">to {r.checkOut}</span></td><td>{!compact && onStatusChange ? <select aria-label={`Status for ${r.guest}`} value={statuses.includes(r.status) ? r.status : 'Confirmed'} onChange={e => onStatusChange(r.id, e.target.value)}>{statuses.map(status => <option key={status} value={status}>{status}</option>)}</select> : <Badge tone={r.status === 'Checked in' ? 'success' : r.status === 'Arriving today' ? 'info' : 'neutral'}>{r.status}</Badge>}</td>{!compact && <td className="amount-cell">{money(r.amount)}</td>}</tr>)}</tbody></table></div>;
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  return <div className="table-scroll"><table>
+    <thead><tr><th>BOOKING / GUEST</th><th>ROOM</th><th>STAY</th><th>STATUS</th>{!compact && <th>AMOUNT</th>}{!compact && onDelete && <th>ACTIONS</th>}</tr></thead>
+    <tbody>{rows.map(r => {
+      const expired = r.checkOut < today;
+      return <tr key={r.id}>
+        <td><strong>{r.guest}</strong><span className="cell-sub">{r.id} · {r.source}</span></td>
+        <td>{r.room}</td>
+        <td><span>{r.checkIn}</span><span className="cell-sub">to {r.checkOut}</span></td>
+        <td>{!compact && onStatusChange && !expired
+          ? <select aria-label={`Status for ${r.guest}`} value={statuses.includes(r.status) ? r.status : 'Confirmed'} onChange={e => onStatusChange(r.id, e.target.value)}>{statuses.map(status => <option key={status} value={status}>{status}</option>)}</select>
+          : <><Badge tone={r.status === 'Checked in' ? 'success' : r.status === 'Arriving today' ? 'info' : 'neutral'}>{r.status}</Badge>{!compact && expired && <span className="cell-sub">Status locked: stay has ended</span>}</>}
+        </td>
+        {!compact && <td className="amount-cell">{money(r.amount)}</td>}
+        {!compact && onDelete && <td><button type="button" onClick={() => onDelete(r.id, r.guest)}>Delete</button></td>}
+      </tr>;
+    })}</tbody>
+  </table></div>;
 }
 function Reservations() {
   const [rows, setRows] = useState<AnyRow[]>([]);
@@ -184,6 +203,21 @@ function Reservations() {
     }
   }
 
+  async function deleteReservation(id: string, guest: string) {
+    const confirmed = window.confirm(
+      `Permanently delete reservation ${id} for ${guest}? This cannot be undone.`
+    );
+    if (!confirmed) return;
+
+    try {
+      setError('');
+      await api.deleteReservation(id);
+      load();
+    } catch (e: any) {
+      setError(e.message || 'Could not delete reservation.');
+    }
+  }
+
   useEffect(() => { load(); }, [query]);
 
   useEffect(() => {
@@ -228,7 +262,7 @@ function Reservations() {
     return () => { active = false; };
   }, [open, selectedProperty, checkInDate, checkOutDate]);
   async function submit(e: FormEvent<HTMLFormElement>) { e.preventDefault(); const f = new FormData(e.currentTarget); try { await api.createReservation({ guest:f.get('guest'), propertyId:f.get('propertyId'), room:f.get('room'), checkIn:f.get('checkIn'), checkOut:f.get('checkOut'), guests:f.get('guests'), amount:f.get('amount'), source:f.get('source') }); setOpen(false); load(); } catch(e:any) { alert(e.message); } }
-  return <><PageHeader eyebrow="HOTEL OPERATIONS" title="Reservations" description="Manage guest bookings, stay dates, and booking status." actions={<Button onClick={() => setOpen(true)}><Plus size={16}/> New reservation</Button>}/><div className="toolbar"><SearchBar value={query} onChange={setQuery} placeholder="Search guest, booking ID, source…"/><div className="toolbar-right"><Badge tone="info">{rows.length} bookings</Badge><Button variant="secondary" onClick={load}><RefreshCw size={15}/> Refresh</Button></div></div>{error && <div className="notice error">{error}</div>}<Panel title="All reservations" subtitle="Sample bookings from the simulated API">{loading ? <div className="loading">Loading reservations…</div> : <ReservationTable rows={rows} onStatusChange={changeReservationStatus}/>}</Panel>{open && <Modal title="Create reservation" onClose={() => setOpen(false)}><form className="form-grid" onSubmit={submit}><label className="span-2">Guest full name<input name="guest" required placeholder="Enter guest name"/></label><label>Hotel<select name="propertyId" value={selectedProperty} onChange={e => { setSelectedProperty(e.target.value); setSelectedRoom(""); }}><option value="hotel-a">Hotel A</option><option value="hotel-b">Hotel B</option></select></label><label>Room number<select name="room" required value={selectedRoom} onChange={e => setSelectedRoom(e.target.value)}><option value="">Select an available room</option>{roomOptions.map((room: AnyRow) => <option key={room.id} value={room.number}>{room.number} · {room.type} · Floor {room.floor}</option>)}</select>{roomOptions.length === 0 && <small>No rooms available for these dates.</small>}</label><label>Check-in<input type="date" name="checkIn" required min={today} value={checkInDate} onChange={e => setCheckInDate(e.target.value)} /></label><label>Check-out<input type="date" name="checkOut" required min={checkInDate || undefined} value={checkOutDate} onChange={e => setCheckOutDate(e.target.value)} /></label><label>Guests<input type="number" name="guests" min="1" defaultValue="2"/></label><label>Amount (VND)<input type="number" name="amount" min="0" defaultValue="1500000"/></label><label className="span-2">Booking source<select name="source"><option>Direct</option><option>Phone</option><option>Walk-in</option><option>Booking.com</option><option>Agoda</option><option>Travel agent</option></select></label><div className="form-actions span-2"><Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button><Button type="submit">Create reservation</Button></div></form></Modal>}</>;
+  return <><PageHeader eyebrow="HOTEL OPERATIONS" title="Reservations" description="Manage guest bookings, stay dates, and booking status." actions={<Button onClick={() => setOpen(true)}><Plus size={16}/> New reservation</Button>}/><div className="toolbar"><SearchBar value={query} onChange={setQuery} placeholder="Search guest, booking ID, source…"/><div className="toolbar-right"><Badge tone="info">{rows.length} bookings</Badge><Button variant="secondary" onClick={load}><RefreshCw size={15}/> Refresh</Button></div></div>{error && <div className="notice error">{error}</div>}<Panel title="All reservations" subtitle="Sample bookings from the simulated API">{loading ? <div className="loading">Loading reservations…</div> : <ReservationTable rows={rows} onStatusChange={changeReservationStatus} onDelete={deleteReservation}/>}</Panel>{open && <Modal title="Create reservation" onClose={() => setOpen(false)}><form className="form-grid" onSubmit={submit}><label className="span-2">Guest full name<input name="guest" required placeholder="Enter guest name"/></label><label>Hotel<select name="propertyId" value={selectedProperty} onChange={e => { setSelectedProperty(e.target.value); setSelectedRoom(""); }}><option value="hotel-a">Hotel A</option><option value="hotel-b">Hotel B</option></select></label><label>Room number<select name="room" required value={selectedRoom} onChange={e => setSelectedRoom(e.target.value)}><option value="">Select an available room</option>{roomOptions.map((room: AnyRow) => <option key={room.id} value={room.number}>{room.number} · {room.type} · Floor {room.floor}</option>)}</select>{roomOptions.length === 0 && <small>No rooms available for these dates.</small>}</label><label>Check-in<input type="date" name="checkIn" required min={today} value={checkInDate} onChange={e => setCheckInDate(e.target.value)} /></label><label>Check-out<input type="date" name="checkOut" required min={checkInDate || undefined} value={checkOutDate} onChange={e => setCheckOutDate(e.target.value)} /></label><label>Guests<input type="number" name="guests" min="1" defaultValue="2"/></label><label>Amount (VND)<input type="number" name="amount" min="0" defaultValue="1500000"/></label><label className="span-2">Booking source<select name="source"><option>Direct</option><option>Phone</option><option>Walk-in</option><option>Booking.com</option><option>Agoda</option><option>Travel agent</option></select></label><div className="form-actions span-2"><Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button><Button type="submit">Create reservation</Button></div></form></Modal>}</>;
 }
 function Rooms({ property }: { property: string }) {
   const [rows, setRows] = useState<AnyRow[]>([]);

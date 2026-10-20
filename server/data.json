@@ -38,7 +38,7 @@
       "checkIn": "2026-10-13",
       "checkOut": "2026-10-15",
       "guests": 2,
-      "status": "Confirmed",
+      "status": "Arriving today",
       "source": "Direct",
       "amount": 1500000
     },
@@ -89,18 +89,6 @@
       "status": "Arriving today",
       "source": "Phone",
       "amount": 1800000
-    },
-    {
-      "id": "RES-1051",
-      "guest": "Pham Gia Huy",
-      "room": "118",
-      "propertyId": "hotel-b",
-      "checkIn": "2026-10-20",
-      "checkOut": "2026-10-24",
-      "guests": 3,
-      "status": "Confirmed",
-      "source": "Agoda",
-      "amount": 5200000
     },
     {
       "id": "RES-1052",
@@ -545,6 +533,42 @@
     ]
   },
   "activity": [
+    {
+      "id": 1792482881540,
+      "text": "Reservation RES-1051 for Pham Gia Huy permanently deleted",
+      "by": "Demo User",
+      "time": "02:54 PM"
+    },
+    {
+      "id": 1792482211245,
+      "text": "Reservation RES-1059 status updated to Arriving today",
+      "by": "Demo User",
+      "time": "02:43 PM"
+    },
+    {
+      "id": 1792482207637,
+      "text": "Reservation RES-1059 status updated to Confirmed",
+      "by": "Demo User",
+      "time": "02:43 PM"
+    },
+    {
+      "id": 1792482170156,
+      "text": "Reservation RES-1059 status updated to Arriving today",
+      "by": "Demo User",
+      "time": "02:42 PM"
+    },
+    {
+      "id": 1792482153092,
+      "text": "Reservation RES-1059 status updated to Confirmed",
+      "by": "Demo User",
+      "time": "02:42 PM"
+    },
+    {
+      "id": 1792482147621,
+      "text": "Reservation RES-1059 status updated to Cancelled",
+      "by": "Demo User",
+      "time": "02:42 PM"
+    },
     {
       "id": 1792481241381,
       "text": "Reservation RES-1060 status updated to Checked out",

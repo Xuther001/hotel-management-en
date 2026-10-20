@@ -404,7 +404,7 @@ app.post('/api/v1/reservations', (req, res) => {
 
   const conflict = d.reservations.some((r: AnyRecord) => {
     const status = String(r.status || '').toLowerCase();
-    const isCancelled = status === 'cancelled' || status === 'canceled';
+    const isCancelled = ['cancelled', 'canceled', 'no-show', 'no show'].includes(status);
     return !isCancelled &&
       r.propertyId === body.propertyId &&
       String(r.room) === String(body.room) &&
@@ -443,9 +443,93 @@ app.post('/api/v1/reservations', (req, res) => {
   res.status(201).json({ data: item });
 });
 app.patch('/api/v1/reservations/:id', (req, res) => {
-  const d = readData(); const item = d.reservations.find((x: AnyRecord) => x.id === req.params.id);
+  const d = readData();
+  const item = d.reservations.find((x: AnyRecord) => x.id === req.params.id);
   if (!item) return res.status(404).json({ error: 'Reservation not found.' });
-  Object.assign(item, req.body); writeData(d); res.json({ data: item });
+
+  const body = req.body || {};
+  const allowedStatuses = ['Confirmed', 'Arriving today', 'Checked in', 'Checked out', 'Cancelled', 'No-show'];
+
+  if (body.status !== undefined && !allowedStatuses.includes(body.status)) {
+    return res.status(400).json({ error: 'Invalid reservation status.' });
+  }
+
+  const updated = { ...item, ...body };
+
+  if (!updated.guest || !updated.propertyId || !updated.room || !updated.checkIn || !updated.checkOut) {
+    return res.status(400).json({ error: 'Guest, hotel, room, check-in, and check-out are required.' });
+  }
+  if (updated.checkOut <= updated.checkIn) {
+    return res.status(400).json({ error: 'Check-out must be after check-in.' });
+  }
+
+  if (body.checkIn !== undefined) {
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    if (updated.checkIn < today) {
+      return res.status(400).json({ error: 'Check-in cannot be in the past.' });
+    }
+  }
+
+  const status = String(updated.status || '').toLowerCase();
+  const releasedStatuses = ['cancelled', 'canceled', 'no-show', 'no show'];
+  const roomOrDatesChanged =
+    body.room !== undefined ||
+    body.propertyId !== undefined ||
+    body.checkIn !== undefined ||
+    body.checkOut !== undefined;
+
+  if (!releasedStatuses.includes(status) && (roomOrDatesChanged || body.status !== undefined)) {
+    const room = d.rooms.find((r: AnyRecord) =>
+      String(r.number) === String(updated.room) &&
+      r.propertyId === updated.propertyId
+    );
+
+    if (!room) {
+      return res.status(400).json({ error: 'The selected room does not belong to this hotel.' });
+    }
+    if (room.status === 'Maintenance' && updated.status !== 'Checked out') {
+      return res.status(400).json({ error: 'This room is under maintenance and cannot be assigned to an active reservation.' });
+    }
+
+    const conflict = d.reservations.some((r: AnyRecord) => {
+      if (r.id === item.id) return false;
+      const otherStatus = String(r.status || '').toLowerCase();
+      return !releasedStatuses.includes(otherStatus) &&
+        r.propertyId === updated.propertyId &&
+        String(r.room) === String(updated.room) &&
+        r.checkIn < updated.checkOut &&
+        r.checkOut > updated.checkIn;
+    });
+
+    if (conflict) {
+      return res.status(409).json({
+        error: 'This room is already booked for some or all of those dates.'
+      });
+    }
+  }
+
+  Object.assign(item, updated);
+
+  if (body.status === 'Checked in' || body.status === 'Checked out') {
+    const room = d.rooms.find((r: AnyRecord) =>
+      String(r.number) === String(item.room) &&
+      r.propertyId === item.propertyId
+    );
+    if (room) {
+      room.status = body.status === 'Checked in' ? 'Occupied' : 'Dirty';
+    }
+  }
+
+  d.activity.unshift({
+    id: Date.now(),
+    text: `Reservation ${item.id} status updated to ${item.status}`,
+    by: 'Demo User',
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  });
+
+  writeData(d);
+  res.json({ data: item });
 });
 app.get('/api/v1/rooms', (req, res) => res.json(list(readData().rooms, req)));
 app.patch('/api/v1/rooms/:id/status', (req, res) => {

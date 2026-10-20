@@ -14,6 +14,7 @@ export const api = {
   reservations: (q = '') => request<any>(`/reservations?q=${encodeURIComponent(q)}`),
   createReservation: (data: any) => request<any>('/reservations', { method: 'POST', body: JSON.stringify(data) }),
   updateReservation: (id: string, data: any) => request<any>(`/reservations/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+  deleteReservation: (id: string) => request<any>(`/reservations/${id}`, { method: 'DELETE' }),
   rooms: (q = '') => request<any>(`/rooms?q=${encodeURIComponent(q)}`),
   updateRoomStatus: (id: string, status: string) => request<any>(`/rooms/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
   updateRoomNote: (id: string, note: string) => request<any>(`/rooms/${id}/note`, { method: 'PATCH', body: JSON.stringify({ note }) }),
