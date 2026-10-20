@@ -357,7 +357,9 @@ app.get('/api/v1/dashboard/overview', (req, res) => {
   const properties = propertyId === 'all' ? d.properties : d.properties.filter((p: AnyRecord) => p.id === propertyId);
   const reservations = propertyId === 'all' ? d.reservations : d.reservations.filter((x: AnyRecord) => x.propertyId === propertyId);
   const employees = d.employees;
-  const revenue = properties.reduce((s: number, p: AnyRecord) => s + p.revenue, 0);
+  const revenue = reservations
+    .filter((r: AnyRecord) => r.status === 'Checked out')
+    .reduce((sum: number, r: AnyRecord) => sum + Number(r.amount || 0), 0);
   const rooms = properties.reduce((s: number, p: AnyRecord) => s + p.rooms, 0);
   const weighted = properties.reduce((s: number, p: AnyRecord) => s + p.rooms * p.occupancy, 0);
   res.json({ data: {
