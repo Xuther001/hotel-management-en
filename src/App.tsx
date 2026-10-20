@@ -429,7 +429,7 @@ function Rooms({ property }: { property: string }) {
   const [rows, setRows] = useState<AnyRow[]>([]);
   const [query, setQuery] = useState('');
   const [noteDrafts, setNoteDrafts] = useState<Record<string, string>>({});
-  const [editingNotes, setEditingNotes] = useState<Record<string, boolean>>({});
+  const [selectedNoteRoom, setSelectedNoteRoom] = useState<AnyRow | null>(null);
   const [savingNotes, setSavingNotes] = useState<Record<string, boolean>>({});
 
   const load = () => api.rooms(query).then(r => {
@@ -459,7 +459,7 @@ function Rooms({ property }: { property: string }) {
     setSavingNotes(prev => ({ ...prev, [room.id]: true }));
     try {
       await api.updateRoomNote(room.id, noteDrafts[room.id] || '');
-      setEditingNotes(prev => ({ ...prev, [room.id]: false }));
+      setSelectedNoteRoom(null);
       load();
     } catch (e: any) {
       alert(e.message || 'Could not save room note.');
@@ -500,33 +500,71 @@ function Rooms({ property }: { property: string }) {
 
         <div className="room-notes">
           <strong>Room notes</strong>
-          {editingNotes[room.id] ? <>
-            <textarea
-              value={noteDrafts[room.id] ?? room.note ?? ''}
-              onChange={e => setNoteDrafts(prev => ({ ...prev, [room.id]: e.target.value }))}
-              maxLength={2000}
-              rows={4}
-              placeholder="Add information about this room…"
-            />
-            <span className="muted">{(noteDrafts[room.id] || '').length}/2000 characters</span>
-            <div className="room-note-actions">
-              <Button variant="secondary" onClick={() => {
-                setNoteDrafts(prev => ({ ...prev, [room.id]: room.note || '' }));
-                setEditingNotes(prev => ({ ...prev, [room.id]: false }));
-              }}>Cancel</Button>
-              <Button onClick={() => saveNote(room)}>
-                {savingNotes[room.id] ? 'Saving…' : 'Save note'}
-              </Button>
-            </div>
-          </> : <>
-            <p className="room-note-text">{room.note || 'No note added.'}</p>
-            <Button variant="secondary" onClick={() => setEditingNotes(prev => ({ ...prev, [room.id]: true }))}>
-              {room.note ? 'Edit note' : 'Add note'}
-            </Button>
-          </>}
+          <p className="room-note-text">{room.note || 'No note added.'}</p>
+          <Button variant="secondary" onClick={() => {
+            setNoteDrafts(prev => ({ ...prev, [room.id]: room.note || '' }));
+            setSelectedNoteRoom(room);
+          }}>
+            {room.note ? 'Edit note' : 'Add note'}
+          </Button>
         </div>
       </div>)}
     </div>
+    {selectedNoteRoom && <Modal
+      title={`Room ${selectedNoteRoom.number} notes`}
+      onClose={() => {
+        if (!savingNotes[selectedNoteRoom.id]) {
+          setNoteDrafts(prev => ({
+            ...prev,
+            [selectedNoteRoom.id]: selectedNoteRoom.note || ''
+          }));
+          setSelectedNoteRoom(null);
+        }
+      }}
+    >
+      <div className="form-grid">
+        <p className="muted span-2">
+          {selectedNoteRoom.propertyId === 'hotel-a' ? 'Hotel A' : 'Hotel B'}
+          {' · '} {selectedNoteRoom.type} · Floor {selectedNoteRoom.floor}
+        </p>
+        <label className="span-2">
+          Room notes
+          <textarea
+            autoFocus
+            value={noteDrafts[selectedNoteRoom.id] ?? ''}
+            onChange={e => setNoteDrafts(prev => ({
+              ...prev,
+              [selectedNoteRoom.id]: e.target.value
+            }))}
+            maxLength={2000}
+            rows={6}
+            placeholder="Add information about this room…"
+          />
+        </label>
+        <span className="muted span-2">
+          {(noteDrafts[selectedNoteRoom.id] || '').length}/2000 characters
+        </span>
+        <div className="form-actions span-2">
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setNoteDrafts(prev => ({
+                ...prev,
+                [selectedNoteRoom.id]: selectedNoteRoom.note || ''
+              }));
+              setSelectedNoteRoom(null);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => saveNote(selectedNoteRoom)}
+          >
+            {savingNotes[selectedNoteRoom.id] ? 'Saving…' : 'Save note'}
+          </Button>
+        </div>
+      </div>
+    </Modal>}
   </>;
 }
 function Employees() {
