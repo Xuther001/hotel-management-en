@@ -51,6 +51,19 @@ function App() {
   const [property, setProperty] = useState('all');
   const [properties, setProperties] = useState<AnyRow[]>([]);
   const [search, setSearch] = useState('');
+  const [reservationCount, setReservationCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    api.reservations('', property)
+      .then(r => {
+        if (active) setReservationCount((r.data || []).length);
+      })
+      .catch(() => {
+        if (active) setReservationCount(null);
+      });
+    return () => { active = false; };
+  }, [property]);
   const location = useLocation();
   const pageTitle = titleMap[location.pathname] || 'Business management';
   useEffect(() => { api.properties().then(r => setProperties(r.data)).catch(() => {}); }, []);
@@ -58,7 +71,7 @@ function App() {
     <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
       <div className="brand"><div className="brand-mark"><Building2 size={20}/></div><div><strong>Haven Group</strong><span>BUSINESS MANAGEMENT</span></div><button className="icon-button mobile-close" onClick={() => setSidebarOpen(false)}><X size={18}/></button></div>
       <div className="workspace-select"><div className="workspace-icon"><Building2 size={17}/></div><div><span>WORKSPACE</span><strong>Hospitality Group</strong></div><ChevronDown size={15}/></div>
-      <nav>{navGroups.map(group => <div className="nav-group" key={group.label}><span className="nav-label">{group.label}</span>{group.items.map(item => { const Icon = item.icon; return <NavLink end={item.to === '/'} to={item.to} key={item.to} onClick={() => setSidebarOpen(false)} className={({isActive}) => `nav-link ${isActive ? 'active' : ''}`}><Icon size={18}/><span>{item.label}</span>{item.to === '/reservations' && <small className="nav-count">5</small>}</NavLink>; })}</div>)}</nav>
+      <nav>{navGroups.map(group => <div className="nav-group" key={group.label}><span className="nav-label">{group.label}</span>{group.items.map(item => { const Icon = item.icon; return <NavLink end={item.to === '/'} to={item.to} key={item.to} onClick={() => setSidebarOpen(false)} className={({isActive}) => `nav-link ${isActive ? 'active' : ''}`}><Icon size={18}/><span>{item.label}</span>{item.to === '/reservations' && <small className="nav-count">{reservationCount === null ? "—" : reservationCount}</small>}</NavLink>; })}</div>)}</nav>
       <div className="sidebar-bottom"><div className="help-card"><div className="help-icon"><Sparkles size={16}/></div><strong>Need a hand?</strong><p>Your internal management workspace is in demo mode.</p><button onClick={() => alert('This is a frontend demo. Add a help module when your backend is ready.')}>View help <ArrowUpRight size={14}/></button></div><div className="user-mini"><div className="avatar">BO</div><div><strong>Business Owner</strong><span>Administrator · Demo</span></div><button className="icon-button" title="Account"><LogOut size={16}/></button></div></div>
     </aside>
     {sidebarOpen && <button className="scrim" onClick={() => setSidebarOpen(false)} aria-label="Close navigation"/>}
