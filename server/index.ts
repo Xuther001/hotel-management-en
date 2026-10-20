@@ -14,8 +14,8 @@ type AnyRecord = Record<string, any>;
 function initialData() {
   return {
     properties: [
-      { id: 'hotel-a', name: 'Hotel A', city: 'Ho Chi Minh City', rooms: 80, occupancy: 82, revenue: 1400000000 },
-      { id: 'hotel-b', name: 'Hotel B', city: 'Ho Chi Minh City', rooms: 60, occupancy: 69, revenue: 1000000000 }
+      { id: 'hotel-a', name: 'Hotel A', city: 'Ho Chi Minh City', rooms: 34, occupancy: 82, revenue: 1400000000 },
+      { id: 'hotel-b', name: 'Hotel B', city: 'Ho Chi Minh City', rooms: 0, occupancy: 69, revenue: 1000000000 }
     ],
     reservations: [
       { id: 'RES-1048', guest: 'Nguyen Minh Anh', room: '305', propertyId: 'hotel-a', checkIn: '2026-10-19', checkOut: '2026-10-22', guests: 2, status: 'Checked in', source: 'Direct', amount: 4500000 },
@@ -25,16 +25,278 @@ function initialData() {
       { id: 'RES-1052', guest: 'Vo Ngoc Linh', room: '501', propertyId: 'hotel-a', checkIn: '2026-10-21', checkOut: '2026-10-23', guests: 2, status: 'Confirmed', source: 'Direct', amount: 3100000 }
     ],
     rooms: [
-      { id: 'A-301', number: '301', type: 'Deluxe King', propertyId: 'hotel-a', status: 'Occupied', floor: 3 },
-      { id: 'A-302', number: '302', type: 'Twin Deluxe', propertyId: 'hotel-a', status: 'Clean', floor: 3 },
-      { id: 'A-303', number: '303', type: 'Superior Queen', propertyId: 'hotel-a', status: 'Dirty', floor: 3 },
-      { id: 'A-304', number: '304', type: 'Deluxe King', propertyId: 'hotel-a', status: 'Maintenance', floor: 3 },
-      { id: 'A-401', number: '401', type: 'Suite', propertyId: 'hotel-a', status: 'Clean', floor: 4 },
-      { id: 'B-201', number: '201', type: 'Superior Queen', propertyId: 'hotel-b', status: 'Occupied', floor: 2 },
-      { id: 'B-202', number: '202', type: 'Twin Deluxe', propertyId: 'hotel-b', status: 'Clean', floor: 2 },
-      { id: 'B-203', number: '203', type: 'Deluxe King', propertyId: 'hotel-b', status: 'Dirty', floor: 2 },
-      { id: 'B-301', number: '301', type: 'Suite', propertyId: 'hotel-b', status: 'Occupied', floor: 3 },
-      { id: 'B-302', number: '302', type: 'Deluxe King', propertyId: 'hotel-b', status: 'Clean', floor: 3 }
+      {
+        "id": "A-G01",
+        "number": "G01",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": "G"
+      },
+      {
+        "id": "A-G02",
+        "number": "G02",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": "G"
+      },
+      {
+        "id": "A-101",
+        "number": "101",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 1
+      },
+      {
+        "id": "A-102",
+        "number": "102",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 1
+      },
+      {
+        "id": "A-103",
+        "number": "103",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 1
+      },
+      {
+        "id": "A-104",
+        "number": "104",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 1
+      },
+      {
+        "id": "A-105",
+        "number": "105",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 1
+      },
+      {
+        "id": "A-106",
+        "number": "106",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 1
+      },
+      {
+        "id": "A-201",
+        "number": "201",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 2
+      },
+      {
+        "id": "A-202",
+        "number": "202",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 2
+      },
+      {
+        "id": "A-203",
+        "number": "203",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 2
+      },
+      {
+        "id": "A-204",
+        "number": "204",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 2
+      },
+      {
+        "id": "A-205",
+        "number": "205",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 2
+      },
+      {
+        "id": "A-206",
+        "number": "206",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 2
+      },
+      {
+        "id": "A-301",
+        "number": "301",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 3
+      },
+      {
+        "id": "A-302",
+        "number": "302",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 3
+      },
+      {
+        "id": "A-303",
+        "number": "303",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 3
+      },
+      {
+        "id": "A-304",
+        "number": "304",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 3
+      },
+      {
+        "id": "A-305",
+        "number": "305",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 3
+      },
+      {
+        "id": "A-401",
+        "number": "401",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 4
+      },
+      {
+        "id": "A-402",
+        "number": "402",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 4
+      },
+      {
+        "id": "A-403",
+        "number": "403",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 4
+      },
+      {
+        "id": "A-404",
+        "number": "404",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 4
+      },
+      {
+        "id": "A-405",
+        "number": "405",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 4
+      },
+      {
+        "id": "A-501",
+        "number": "501",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 5
+      },
+      {
+        "id": "A-502",
+        "number": "502",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 5
+      },
+      {
+        "id": "A-503",
+        "number": "503",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 5
+      },
+      {
+        "id": "A-504",
+        "number": "504",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 5
+      },
+      {
+        "id": "A-505",
+        "number": "505",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 5
+      },
+      {
+        "id": "A-601",
+        "number": "601",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 6
+      },
+      {
+        "id": "A-602",
+        "number": "602",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 6
+      },
+      {
+        "id": "A-603",
+        "number": "603",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 6
+      },
+      {
+        "id": "A-604",
+        "number": "604",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 6
+      },
+      {
+        "id": "A-605",
+        "number": "605",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 6
+      }
     ],
     employees: [
       { id: 'EMP-001', name: 'Nguyen Thi Mai', role: 'Front Desk', property: 'Hotel A', status: 'On shift', department: 'Front Office', salary: 12000000 },
