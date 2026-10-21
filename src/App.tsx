@@ -139,6 +139,44 @@ function Dashboard({ property }: { property: string }) {
 function SearchBar({ value, onChange, placeholder = 'Search records...' }: { value: string; onChange: (v:string)=>void; placeholder?: string }) {
   return <label className="search-box"><Search size={17}/><input id="global-search" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}/>{value && <button type="button" onClick={() => onChange('')}><X size={14}/></button>}</label>;
 }
+function formatLengthOfStay(checkIn: string, checkOut: string): string {
+  const parseDate = (value: string) => {
+    const match = /^(\\d{4})-(\\d{2})-(\\d{2})$/.exec(value || '');
+    if (!match) return null;
+
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const timestamp = Date.UTC(year, month - 1, day);
+    const date = new Date(timestamp);
+
+    if (
+      date.getUTCFullYear() !== year ||
+      date.getUTCMonth() !== month - 1 ||
+      date.getUTCDate() !== day
+    ) return null;
+
+    return { year, month, day, timestamp };
+  };
+
+  const start = parseDate(checkIn);
+  const end = parseDate(checkOut);
+
+  if (!start || !end || end.timestamp <= start.timestamp) return '—';
+
+  const nights = Math.round(
+    (end.timestamp - start.timestamp) / 86400000
+  );
+  const months =
+    (end.year - start.year) * 12 + end.month - start.month;
+
+  if (months >= 1 && start.day === end.day) {
+    return `${months} ${months === 1 ? 'month' : 'months'}`;
+  }
+
+  return `${nights} ${nights === 1 ? 'night' : 'nights'}`;
+}
+
 function ReservationTable({ rows, compact = false, onStatusChange, onDelete }: { rows: AnyRow[]; compact?: boolean; onStatusChange?: (id: string, status: string) => void; onDelete?: (id: string, guest: string) => void }) {
   if (!rows.length) return <EmptyState title="No reservations found" text="Try changing your search or add a reservation."/>;
   const statuses = ['Confirmed', 'Arriving today', 'Checked in', 'Checked out', 'Cancelled', 'No-show'];
@@ -146,7 +184,7 @@ function ReservationTable({ rows, compact = false, onStatusChange, onDelete }: {
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
   return <div className="table-scroll"><table>
-    <thead><tr><th>BOOKING / GUEST</th><th>HOTEL</th><th>ROOM</th><th>STAY</th><th>STATUS</th>{!compact && <th>AMOUNT</th>}{!compact && onDelete && <th>ACTIONS</th>}</tr></thead>
+    <thead><tr><th>BOOKING / GUEST</th><th>HOTEL</th><th>ROOM</th><th>STAY</th><th>LENGTH OF STAY</th><th>STATUS</th>{!compact && <th>AMOUNT</th>}{!compact && onDelete && <th>ACTIONS</th>}</tr></thead>
     <tbody>{rows.map(r => {
       const expired = r.checkOut < today;
       return <tr key={r.id}>
@@ -154,6 +192,7 @@ function ReservationTable({ rows, compact = false, onStatusChange, onDelete }: {
         <td>{r.propertyId === 'hotel-a' ? 'Hotel A' : r.propertyId === 'hotel-b' ? 'Hotel B' : (r.property || 'Unknown hotel')}</td>
         <td>{r.room}</td>
         <td><span>{r.checkIn}</span><span className="cell-sub">to {r.checkOut}</span></td>
+        <td>{formatLengthOfStay(r.checkIn, r.checkOut)}</td>
         <td>{!compact && onStatusChange && !expired
           ? <select aria-label={`Status for ${r.guest}`} value={statuses.includes(r.status) ? r.status : 'Confirmed'} onChange={e => onStatusChange(r.id, e.target.value)}>{statuses.map(status => <option key={status} value={status}>{status}</option>)}</select>
           : <><Badge tone={r.status === 'Checked in' ? 'success' : r.status === 'Arriving today' ? 'info' : 'neutral'}>{r.status}</Badge>{!compact && expired && <span className="cell-sub">Status locked: stay has ended</span>}</>}
@@ -369,8 +408,8 @@ function Reservations({ property }: { property: string }) {
       const guest = rows.find((row: AnyRow) => row.id === id);
       const action = status === 'Checked in' ? 'check in' : 'check out';
       const roomAction = status === 'Checked in'
-        ? 'The room will be marked as Occupied.'
-        : 'The room will be marked as Dirty for housekeeping.';
+        ? 'Occupancy will become Occupied. Housekeeping will remain unchanged.'
+        : 'Occupancy will become Vacant and housekeeping will become Dirty.';
 
       const confirmed = window.confirm(
         `Are you sure you want to ${action}${guest ? ` ${guest.guest}` : ''}?\n\n${roomAction}`
@@ -469,9 +508,13 @@ function Rooms({ property }: { property: string }) {
 
   useEffect(() => { load(); }, [query, property]);
 
-  async function changeStatus(id: string, status: string) {
+  async function changeStatus(
+    id: string,
+    field: 'occupancyStatus' | 'housekeepingStatus',
+    status: string
+  ) {
     try {
-      await api.updateRoomStatus(id, status);
+      await api.updateRoomStatus(id, field, status);
       load();
     } catch (e: any) {
       alert(e.message || 'Could not update room status.');
@@ -546,21 +589,21 @@ function Rooms({ property }: { property: string }) {
   }
 
   const counts = useMemo(() => ({
-    available: rows.filter(r => r.status === 'Clean').length,
-    occupied: rows.filter(r => r.status === 'Occupied').length,
-    dirty: rows.filter(r => r.status === 'Dirty').length,
-    maintenance: rows.filter(r => r.status === 'Maintenance').length,
-    inspected: rows.filter(r => r.status === 'Inspected').length
+    vacant: rows.filter(r => r.occupancyStatus === 'Vacant').length,
+    occupied: rows.filter(r => r.occupancyStatus === 'Occupied').length,
+    maintenance: rows.filter(r => r.occupancyStatus === 'Maintenance').length,
+    clean: rows.filter(r => r.housekeepingStatus === 'Clean').length,
+    dirty: rows.filter(r => r.housekeepingStatus === 'Dirty').length
   }), [rows]);
 
   return <>
     <PageHeader eyebrow="HOTEL OPERATIONS" title="Room management" description="View room availability, update operational status, and maintain room notes." actions={<><Button variant="secondary" onClick={load}><RefreshCw size={15}/> Refresh</Button><Button onClick={() => { if (!pushBusy) void enableNotifications(); }}><Bell size={15}/> {pushBusy ? "Enabling…" : "Enable Notifications"}</Button></>}/>
     <div className="mini-stat-grid">
-      <div><span>Clean / available</span><strong>{counts.available}</strong></div>
+      <div><span>Vacant</span><strong>{counts.vacant}</strong></div>
       <div><span>Occupied</span><strong>{counts.occupied}</strong></div>
-      <div><span>Needs cleaning</span><strong>{counts.dirty}</strong></div>
       <div><span>Maintenance</span><strong>{counts.maintenance}</strong></div>
-      <div><span>Inspected</span><strong>{counts.inspected}</strong></div>
+      <div><span>Clean</span><strong>{counts.clean}</strong></div>
+      <div><span>Dirty</span><strong>{counts.dirty}</strong></div>
     </div>
     <div className="toolbar">
       <SearchBar value={query} onChange={setQuery} placeholder="Search room number or type…"/>
@@ -568,16 +611,34 @@ function Rooms({ property }: { property: string }) {
     </div>
     {pushState && <p role="status" className="muted">{pushState}</p>}
     <div className="room-grid">
-      {rows.map(room => <div className={"room-card status-" + room.status.toLowerCase().replace(' ','-')} key={room.id}>
+      {rows.map(room => <div className="room-card" key={room.id}>
         <div className="room-card-top">
           <div className="room-number">{room.number}</div>
-          <select className={"room-status-select status-" + room.status.toLowerCase().replace(" ","-")} aria-label={"Update status for room " + room.number} value={room.status} onChange={e => changeStatus(room.id,e.target.value)}><option>Clean</option><option>Dirty</option><option>Occupied</option><option>Maintenance</option><option>Inspected</option></select>
+          <div className="room-status-controls">
+            <select
+              className={"room-status-select status-" + room.occupancyStatus.toLowerCase()}
+              aria-label={"Update occupancy for room " + room.number}
+              value={room.occupancyStatus}
+              onChange={e => changeStatus(room.id, 'occupancyStatus', e.target.value)}
+            >
+              <option value="Vacant">Vacant</option>
+              <option value="Occupied">Occupied</option>
+              <option value="Maintenance">Maintenance</option>
+            </select>
+            <select
+              className={"room-status-select status-" + room.housekeepingStatus.toLowerCase()}
+              aria-label={"Update housekeeping for room " + room.number}
+              value={room.housekeepingStatus}
+              onChange={e => changeStatus(room.id, 'housekeepingStatus', e.target.value)}
+            >
+              <option value="Clean">Clean</option>
+              <option value="Dirty">Dirty</option>
+            </select>
+          </div>
         </div>
-        <strong>{room.type}</strong>
         <span>{room.propertyId === 'hotel-a' ? 'Hotel A' : 'Hotel B'} · Floor {room.floor}</span>
 
         <div className="room-notes">
-          <strong>Room notes</strong>
           <p className="room-note-text">{room.note || 'No note added.'}</p>
           <Button variant="secondary" onClick={() => {
             setNoteDrafts(prev => ({ ...prev, [room.id]: room.note || '' }));

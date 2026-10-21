@@ -422,7 +422,7 @@ app.post('/api/v1/reservations', (req, res) => {
   if (!room) {
     return res.status(400).json({ error: 'The selected room does not belong to this hotel.' });
   }
-  if (room.status === 'Maintenance') {
+  if (room.occupancyStatus === 'Maintenance') {
     return res.status(400).json({ error: 'This room is under maintenance and cannot be reserved.' });
   }
 
@@ -512,7 +512,7 @@ app.patch('/api/v1/reservations/:id', (req, res) => {
     if (!room) {
       return res.status(400).json({ error: 'The selected room does not belong to this hotel.' });
     }
-    if (room.status === 'Maintenance' && updated.status !== 'Checked out') {
+    if (room.occupancyStatus === 'Maintenance' && updated.status !== 'Checked out') {
       return res.status(400).json({ error: 'This room is under maintenance and cannot be assigned to an active reservation.' });
     }
 
@@ -541,7 +541,12 @@ app.patch('/api/v1/reservations/:id', (req, res) => {
       r.propertyId === item.propertyId
     );
     if (room) {
-      room.status = body.status === 'Checked in' ? 'Occupied' : 'Dirty';
+      if (body.status === 'Checked in') {
+        room.occupancyStatus = 'Occupied';
+      } else {
+        room.occupancyStatus = 'Vacant';
+        room.housekeepingStatus = 'Dirty';
+      }
     }
   }
 
@@ -636,16 +641,35 @@ app.patch('/api/v1/rooms/:id/status', async (req, res) => {
   const item = d.rooms.find((x: AnyRecord) => x.id === req.params.id);
   if (!item) return res.status(404).json({ error: 'Room not found.' });
 
-  const allowed = ['Clean', 'Dirty', 'Occupied', 'Maintenance', 'Inspected'];
-  if (!allowed.includes(req.body.status)) {
-    return res.status(400).json({ error: 'Invalid room status.' });
+  const hasOccupancy = Object.prototype.hasOwnProperty.call(req.body, 'occupancyStatus');
+  const hasHousekeeping = Object.prototype.hasOwnProperty.call(req.body, 'housekeepingStatus');
+
+  if (hasOccupancy === hasHousekeeping) {
+    return res.status(400).json({ error: 'Update either occupancyStatus or housekeepingStatus, not both.' });
   }
 
-  const previousStatus = item.status;
-  item.status = req.body.status;
+  const field = hasOccupancy ? 'occupancyStatus' : 'housekeepingStatus';
+  const value = hasOccupancy ? req.body.occupancyStatus : req.body.housekeepingStatus;
+  const allowed = hasOccupancy
+    ? ['Occupied', 'Vacant', 'Maintenance']
+    : ['Clean', 'Dirty'];
+
+  if (!allowed.includes(value)) {
+    return res.status(400).json({ error: `Invalid ${field}.` });
+  }
+
+  const previousStatus = item.housekeepingStatus;
+  item[field] = value;
   writeData(d);
 
-  if (previousStatus !== 'Clean' && item.status === 'Clean' && configureWebPush()) {
+  const isTransitionToClean =
+    field === 'housekeepingStatus' &&
+    previousStatus !== 'Clean' &&
+    item.housekeepingStatus === 'Clean';
+  const pushConfigured = isTransitionToClean ? configureWebPush() : false;
+  const subscriptions = isTransitionToClean ? readPushSubscriptions() : [];
+
+  if (isTransitionToClean && pushConfigured) {
     const property = d.properties.find((x: AnyRecord) => x.id === item.propertyId);
     const payload = JSON.stringify({
       title: 'Room marked Clean',
@@ -653,7 +677,7 @@ app.patch('/api/v1/rooms/:id/status', async (req, res) => {
       url: '/rooms'
     });
 
-    await Promise.all(readPushSubscriptions().map(async (subscription: any) => {
+    await Promise.all(subscriptions.map(async (subscription: any) => {
       try {
         await webpush.sendNotification(subscription, payload);
       } catch (error: any) {

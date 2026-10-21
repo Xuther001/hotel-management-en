@@ -19,28 +19,232 @@
   ],
   "reservations": [
     {
-      "id": "RES-1054",
-      "guest": "Stacy Vo",
-      "room": "G01",
+      "id": "RES-1053",
+      "guest": "NGUYỄN QUỐC VỊNH / NGUYỄN XUÂN HẠNH",
+      "room": "G02",
       "propertyId": "hotel-a",
-      "checkIn": "2026-10-21",
-      "checkOut": "2026-10-23",
+      "checkIn": "2026-07-01",
+      "checkOut": "2027-07-01",
       "guests": 2,
-      "status": "Confirmed",
+      "status": "Checked in",
       "source": "Direct",
-      "amount": 1500000
+      "amount": 0
     },
     {
-      "id": "RES-1053",
-      "guest": "Tien Nguyen",
-      "room": "G01",
+      "id": "RES-1054",
+      "guest": "NGUYỄN THỊ XUÂN PHÚC",
+      "room": "101",
       "propertyId": "hotel-a",
-      "checkIn": "2026-10-20",
-      "checkOut": "2026-10-21",
-      "guests": 2,
+      "checkIn": "2026-10-12",
+      "checkOut": "2027-01-12",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1055",
+      "guest": "HOÀNG NINH KHÔI",
+      "room": "102",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-12-10",
+      "checkOut": "2027-01-12",
+      "guests": 1,
       "status": "Confirmed",
       "source": "Direct",
-      "amount": 1500000
+      "amount": 0
+    },
+    {
+      "id": "RES-1056",
+      "guest": "PHAM THI HONG / THUY VAN VU",
+      "room": "105",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-04",
+      "checkOut": "2026-11-17",
+      "guests": 2,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1057",
+      "guest": "TÔ QUANG VINH / NGUYỄN NHẬT MINH",
+      "room": "106",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-12",
+      "checkOut": "2027-01-12",
+      "guests": 2,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1058",
+      "guest": "SILSON ALEC BYRON",
+      "room": "201",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-09",
+      "checkOut": "2026-10-31",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1059",
+      "guest": "CAO QUỐC ĐẠT",
+      "room": "202",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-12",
+      "checkOut": "2027-01-12",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1060",
+      "guest": "PHẠM THỊ PHƯƠNG NGA",
+      "room": "203",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-01-01",
+      "checkOut": "2027-01-01",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1061",
+      "guest": "NGUYỄN PHƯƠNG THẢO",
+      "room": "204",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-12",
+      "checkOut": "2027-01-12",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1062",
+      "guest": "HÀ VĨNH THIỆN",
+      "room": "206",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-01",
+      "checkOut": "2026-11-01",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1063",
+      "guest": "VÕ NGỌC THUÝ HƯƠNG / NGUYỄN HUYỀN TRÂN",
+      "room": "301",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-12",
+      "checkOut": "2027-01-12",
+      "guests": 2,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1064",
+      "guest": "MAI ANH ĐỨC",
+      "room": "302",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-21",
+      "checkOut": "2026-10-22",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1065",
+      "guest": "TRƯƠNG NGỌC HÙNG",
+      "room": "304",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-01",
+      "checkOut": "2026-11-01",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1066",
+      "guest": "TRẦN KHẮC VINH",
+      "room": "501",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-18",
+      "checkOut": "2027-12-18",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1067",
+      "guest": "HUYNH DUC THU",
+      "room": "504",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-06-01",
+      "checkOut": "2027-06-01",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1068",
+      "guest": "NGUYỄN THỊ ĐÔNG",
+      "room": "602",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-10",
+      "checkOut": "2026-10-23",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1069",
+      "guest": "NGUYỄN THÁI SƠN / NGUYỄN ĐÌNH HOÀNG",
+      "room": "603",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-10",
+      "checkOut": "2026-11-10",
+      "guests": 2,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1070",
+      "guest": "PHẠM VĂN THÁNG",
+      "room": "604",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-18",
+      "checkOut": "2026-10-24",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1071",
+      "guest": "DAVIDS THOMAS WALTER",
+      "room": "605",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-20",
+      "checkOut": "2026-10-25",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
     }
   ],
   "rooms": [
@@ -49,273 +253,307 @@
       "number": "G01",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
       "floor": "G",
-      "note": ""
+      "note": "",
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-G02",
       "number": "G02",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": "G"
+      "floor": "G",
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-101",
       "number": "101",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 1
+      "floor": 1,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-102",
       "number": "102",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 1
+      "floor": 1,
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-103",
       "number": "103",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 1
+      "floor": 1,
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-104",
       "number": "104",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 1
+      "floor": 1,
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-105",
       "number": "105",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 1
+      "floor": 1,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-106",
       "number": "106",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 1
+      "floor": 1,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-201",
       "number": "201",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 2
+      "floor": 2,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-202",
       "number": "202",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 2
+      "floor": 2,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-203",
       "number": "203",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 2
+      "floor": 2,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-204",
       "number": "204",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 2
+      "floor": 2,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-205",
       "number": "205",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 2
+      "floor": 2,
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-206",
       "number": "206",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 2
+      "floor": 2,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-301",
       "number": "301",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 3
+      "floor": 3,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-302",
       "number": "302",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 3
+      "floor": 3,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-303",
       "number": "303",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 3
+      "floor": 3,
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-304",
       "number": "304",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 3
+      "floor": 3,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-305",
       "number": "305",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 3
+      "floor": 3,
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-401",
       "number": "401",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 4
+      "floor": 4,
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-402",
       "number": "402",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 4
+      "floor": 4,
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-403",
       "number": "403",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 4
+      "floor": 4,
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-404",
       "number": "404",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 4
+      "floor": 4,
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-405",
       "number": "405",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 4
+      "floor": 4,
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-501",
       "number": "501",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 5
+      "floor": 5,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-502",
       "number": "502",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 5
+      "floor": 5,
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-503",
       "number": "503",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 5
+      "floor": 5,
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-504",
       "number": "504",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 5
+      "floor": 5,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-505",
       "number": "505",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 5
+      "floor": 5,
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-601",
       "number": "601",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 6
+      "floor": 6,
+      "occupancyStatus": "Vacant",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-602",
       "number": "602",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 6
+      "floor": 6,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-603",
       "number": "603",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 6
+      "floor": 6,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-604",
       "number": "604",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 6
+      "floor": 6,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     },
     {
       "id": "A-605",
       "number": "605",
       "type": "Standard Room",
       "propertyId": "hotel-a",
-      "status": "Clean",
-      "floor": 6
+      "floor": 6,
+      "occupancyStatus": "Occupied",
+      "housekeepingStatus": "Clean"
     }
   ],
   "employees": [
@@ -412,6 +650,18 @@
     }
   ],
   "activity": [
+    {
+      "id": 1792560035593,
+      "text": "Reservation RES-1053 for Tien Nguyen permanently deleted",
+      "by": "Demo User",
+      "time": "12:20 PM"
+    },
+    {
+      "id": 1792560033467,
+      "text": "Reservation RES-1054 for Stacy Vo permanently deleted",
+      "by": "Demo User",
+      "time": "12:20 PM"
+    },
     {
       "id": 1792514606683,
       "text": "Reservation RES-1054 created for Stacy Vo",

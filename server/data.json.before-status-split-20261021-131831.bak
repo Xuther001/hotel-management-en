@@ -1,0 +1,950 @@
+{
+  "properties": [
+    {
+      "id": "hotel-a",
+      "name": "Hotel A",
+      "city": "Ho Chi Minh City",
+      "rooms": 34,
+      "occupancy": 82,
+      "revenue": 1400000000
+    },
+    {
+      "id": "hotel-b",
+      "name": "Hotel B",
+      "city": "Ho Chi Minh City",
+      "rooms": 0,
+      "occupancy": 69,
+      "revenue": 1000000000
+    }
+  ],
+  "reservations": [
+    {
+      "id": "RES-1053",
+      "guest": "NGUYỄN QUỐC VỊNH / NGUYỄN XUÂN HẠNH",
+      "room": "G02",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-07-01",
+      "checkOut": "2027-07-01",
+      "guests": 2,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1054",
+      "guest": "NGUYỄN THỊ XUÂN PHÚC",
+      "room": "101",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-12",
+      "checkOut": "2027-01-12",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1055",
+      "guest": "HOÀNG NINH KHÔI",
+      "room": "102",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-12-10",
+      "checkOut": "2027-01-12",
+      "guests": 1,
+      "status": "Confirmed",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1056",
+      "guest": "PHAM THI HONG / THUY VAN VU",
+      "room": "105",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-04",
+      "checkOut": "2026-11-17",
+      "guests": 2,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1057",
+      "guest": "TÔ QUANG VINH / NGUYỄN NHẬT MINH",
+      "room": "106",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-12",
+      "checkOut": "2027-01-12",
+      "guests": 2,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1058",
+      "guest": "SILSON ALEC BYRON",
+      "room": "201",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-09",
+      "checkOut": "2026-10-31",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1059",
+      "guest": "CAO QUỐC ĐẠT",
+      "room": "202",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-12",
+      "checkOut": "2027-01-12",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1060",
+      "guest": "PHẠM THỊ PHƯƠNG NGA",
+      "room": "203",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-01-01",
+      "checkOut": "2027-01-01",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1061",
+      "guest": "NGUYỄN PHƯƠNG THẢO",
+      "room": "204",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-12",
+      "checkOut": "2027-01-12",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1062",
+      "guest": "HÀ VĨNH THIỆN",
+      "room": "206",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-01",
+      "checkOut": "2026-11-01",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1063",
+      "guest": "VÕ NGỌC THUÝ HƯƠNG / NGUYỄN HUYỀN TRÂN",
+      "room": "301",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-12",
+      "checkOut": "2027-01-12",
+      "guests": 2,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1064",
+      "guest": "MAI ANH ĐỨC",
+      "room": "302",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-21",
+      "checkOut": "2026-10-22",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1065",
+      "guest": "TRƯƠNG NGỌC HÙNG",
+      "room": "304",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-01",
+      "checkOut": "2026-11-01",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1066",
+      "guest": "TRẦN KHẮC VINH",
+      "room": "501",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-18",
+      "checkOut": "2027-12-18",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1067",
+      "guest": "HUYNH DUC THU",
+      "room": "504",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-06-01",
+      "checkOut": "2027-06-01",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1068",
+      "guest": "NGUYỄN THỊ ĐÔNG",
+      "room": "602",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-10",
+      "checkOut": "2026-10-23",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1069",
+      "guest": "NGUYỄN THÁI SƠN / NGUYỄN ĐÌNH HOÀNG",
+      "room": "603",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-10",
+      "checkOut": "2026-11-10",
+      "guests": 2,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1070",
+      "guest": "PHẠM VĂN THÁNG",
+      "room": "604",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-18",
+      "checkOut": "2026-10-24",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    },
+    {
+      "id": "RES-1071",
+      "guest": "DAVIDS THOMAS WALTER",
+      "room": "605",
+      "propertyId": "hotel-a",
+      "checkIn": "2026-10-20",
+      "checkOut": "2026-10-25",
+      "guests": 1,
+      "status": "Checked in",
+      "source": "Direct",
+      "amount": 0
+    }
+  ],
+  "rooms": [
+    {
+      "id": "A-G01",
+      "number": "G01",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": "G",
+      "note": ""
+    },
+    {
+      "id": "A-G02",
+      "number": "G02",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": "G"
+    },
+    {
+      "id": "A-101",
+      "number": "101",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 1
+    },
+    {
+      "id": "A-102",
+      "number": "102",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 1
+    },
+    {
+      "id": "A-103",
+      "number": "103",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 1
+    },
+    {
+      "id": "A-104",
+      "number": "104",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 1
+    },
+    {
+      "id": "A-105",
+      "number": "105",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 1
+    },
+    {
+      "id": "A-106",
+      "number": "106",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 1
+    },
+    {
+      "id": "A-201",
+      "number": "201",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 2
+    },
+    {
+      "id": "A-202",
+      "number": "202",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 2
+    },
+    {
+      "id": "A-203",
+      "number": "203",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 2
+    },
+    {
+      "id": "A-204",
+      "number": "204",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 2
+    },
+    {
+      "id": "A-205",
+      "number": "205",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 2
+    },
+    {
+      "id": "A-206",
+      "number": "206",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 2
+    },
+    {
+      "id": "A-301",
+      "number": "301",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 3
+    },
+    {
+      "id": "A-302",
+      "number": "302",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 3
+    },
+    {
+      "id": "A-303",
+      "number": "303",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 3
+    },
+    {
+      "id": "A-304",
+      "number": "304",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 3
+    },
+    {
+      "id": "A-305",
+      "number": "305",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 3
+    },
+    {
+      "id": "A-401",
+      "number": "401",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 4
+    },
+    {
+      "id": "A-402",
+      "number": "402",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 4
+    },
+    {
+      "id": "A-403",
+      "number": "403",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 4
+    },
+    {
+      "id": "A-404",
+      "number": "404",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 4
+    },
+    {
+      "id": "A-405",
+      "number": "405",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 4
+    },
+    {
+      "id": "A-501",
+      "number": "501",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 5
+    },
+    {
+      "id": "A-502",
+      "number": "502",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 5
+    },
+    {
+      "id": "A-503",
+      "number": "503",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 5
+    },
+    {
+      "id": "A-504",
+      "number": "504",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 5
+    },
+    {
+      "id": "A-505",
+      "number": "505",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 5
+    },
+    {
+      "id": "A-601",
+      "number": "601",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Clean",
+      "floor": 6
+    },
+    {
+      "id": "A-602",
+      "number": "602",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 6
+    },
+    {
+      "id": "A-603",
+      "number": "603",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 6
+    },
+    {
+      "id": "A-604",
+      "number": "604",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 6
+    },
+    {
+      "id": "A-605",
+      "number": "605",
+      "type": "Standard Room",
+      "propertyId": "hotel-a",
+      "status": "Occupied",
+      "floor": 6
+    }
+  ],
+  "employees": [
+    {
+      "id": "EMP-001",
+      "name": "Nguyen Thi Mai",
+      "property": "Hotel A",
+      "status": "On shift",
+      "department": "Front Office",
+      "salary": 12000000,
+      "jobTitle": "Receptionist"
+    },
+    {
+      "id": "EMP-002",
+      "name": "Tran Van Duc",
+      "property": "Hotel A",
+      "status": "On shift",
+      "department": "Housekeeping",
+      "salary": 9000000,
+      "jobTitle": "Housekeeper"
+    },
+    {
+      "id": "EMP-003",
+      "name": "Le Thanh Vy",
+      "property": "Hotel B",
+      "status": "On shift",
+      "department": "Management",
+      "salary": 22000000,
+      "jobTitle": "Hotel Manager"
+    },
+    {
+      "id": "EMP-004",
+      "name": "Pham Hoang Nam",
+      "property": "Group",
+      "status": "On leave",
+      "department": "Finance",
+      "salary": 16000000,
+      "jobTitle": "Accountant"
+    }
+  ],
+  "expenses": [
+    {
+      "id": "EXP-021",
+      "date": "2026-10-18",
+      "category": "Utilities",
+      "property": "Hotel A",
+      "description": "Electricity bill",
+      "amount": 28500000,
+      "status": "Approved"
+    },
+    {
+      "id": "EXP-022",
+      "date": "2026-10-18",
+      "category": "Supplies",
+      "property": "Hotel B",
+      "description": "Guest amenities",
+      "amount": 7400000,
+      "status": "Pending"
+    },
+    {
+      "id": "EXP-023",
+      "date": "2026-10-17",
+      "category": "Maintenance",
+      "property": "Hotel A",
+      "description": "Air conditioning service",
+      "amount": 5200000,
+      "status": "Approved"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-01",
+      "title": "Inspect room 304 air conditioner",
+      "property": "Hotel A",
+      "priority": "High",
+      "status": "Overdue",
+      "assignee": "Maintenance team"
+    },
+    {
+      "id": "TASK-02",
+      "title": "Prepare rooms 303 and 203",
+      "property": "Both hotels",
+      "priority": "Normal",
+      "status": "In progress",
+      "assignee": "Housekeeping"
+    },
+    {
+      "id": "TASK-03",
+      "title": "Renew employee contract",
+      "property": "Hotel B",
+      "priority": "Normal",
+      "status": "Pending",
+      "assignee": "HR"
+    }
+  ],
+  "activity": [
+    {
+      "id": 1792560035593,
+      "text": "Reservation RES-1053 for Tien Nguyen permanently deleted",
+      "by": "Demo User",
+      "time": "12:20 PM"
+    },
+    {
+      "id": 1792560033467,
+      "text": "Reservation RES-1054 for Stacy Vo permanently deleted",
+      "by": "Demo User",
+      "time": "12:20 PM"
+    },
+    {
+      "id": 1792514606683,
+      "text": "Reservation RES-1054 created for Stacy Vo",
+      "by": "Demo User",
+      "time": "11:43 PM"
+    },
+    {
+      "id": 1792513079355,
+      "text": "Reservation RES-1053 created for Tien Nguyen",
+      "by": "Demo User",
+      "time": "11:17 PM"
+    },
+    {
+      "id": 1792512733131,
+      "text": "Reservation RES-1053 for Tien Nguyen permanently deleted",
+      "by": "Demo User",
+      "time": "11:12 PM"
+    },
+    {
+      "id": 1792512517638,
+      "text": "Reservation RES-1053 created for Tien Nguyen",
+      "by": "Demo User",
+      "time": "11:08 PM"
+    },
+    {
+      "id": 1792511620959,
+      "text": "Reservation RES-1058 for Tien Nguyen permanently deleted",
+      "by": "Demo User",
+      "time": "10:53 PM"
+    },
+    {
+      "id": 1792511619033,
+      "text": "Reservation RES-1057 for Anh Nguyen permanently deleted",
+      "by": "Demo User",
+      "time": "10:53 PM"
+    },
+    {
+      "id": 1792511617328,
+      "text": "Reservation RES-1060 for Kim permanently deleted",
+      "by": "Demo User",
+      "time": "10:53 PM"
+    },
+    {
+      "id": 1792511615488,
+      "text": "Reservation RES-1059 for Willy permanently deleted",
+      "by": "Demo User",
+      "time": "10:53 PM"
+    },
+    {
+      "id": 1792511613824,
+      "text": "Reservation RES-1048 for Nguyen Minh Anh permanently deleted",
+      "by": "Demo User",
+      "time": "10:53 PM"
+    },
+    {
+      "id": 1792511611753,
+      "text": "Reservation RES-1052 for Vo Ngoc Linh permanently deleted",
+      "by": "Demo User",
+      "time": "10:53 PM"
+    },
+    {
+      "id": 1792511370785,
+      "text": "Reservation RES-1058 status updated to Checked out",
+      "by": "Demo User",
+      "time": "10:49 PM"
+    },
+    {
+      "id": 1792511336393,
+      "text": "Reservation RES-1058 status updated to Checked in",
+      "by": "Demo User",
+      "time": "10:48 PM"
+    },
+    {
+      "id": 1792511301801,
+      "text": "Reservation RES-1058 status updated to Cancelled",
+      "by": "Demo User",
+      "time": "10:48 PM"
+    },
+    {
+      "id": 1792511298153,
+      "text": "Reservation RES-1058 status updated to No-show",
+      "by": "Demo User",
+      "time": "10:48 PM"
+    },
+    {
+      "id": 1792511295985,
+      "text": "Reservation RES-1058 status updated to Cancelled",
+      "by": "Demo User",
+      "time": "10:48 PM"
+    },
+    {
+      "id": 1792511293826,
+      "text": "Reservation RES-1058 status updated to Arriving today",
+      "by": "Demo User",
+      "time": "10:48 PM"
+    },
+    {
+      "id": 1792511033676,
+      "text": "Reservation RES-1058 created for Tien Nguyen",
+      "by": "Demo User",
+      "time": "10:43 PM"
+    },
+    {
+      "id": 1792485556971,
+      "text": "Reservation RES-1057 created for Anh Nguyen",
+      "by": "Demo User",
+      "time": "03:39 PM"
+    },
+    {
+      "id": 1792485445836,
+      "text": "Reservation RES-1058 for Bill Tran permanently deleted",
+      "by": "Demo User",
+      "time": "03:37 PM"
+    },
+    {
+      "id": 1792485442476,
+      "text": "Reservation RES-1049 for Tran Quoc Bao permanently deleted",
+      "by": "Demo User",
+      "time": "03:37 PM"
+    },
+    {
+      "id": 1792485438068,
+      "text": "Reservation RES-1050 for Le Thu Ha permanently deleted",
+      "by": "Demo User",
+      "time": "03:37 PM"
+    },
+    {
+      "id": 1792482881540,
+      "text": "Reservation RES-1051 for Pham Gia Huy permanently deleted",
+      "by": "Demo User",
+      "time": "02:54 PM"
+    },
+    {
+      "id": 1792482211245,
+      "text": "Reservation RES-1059 status updated to Arriving today",
+      "by": "Demo User",
+      "time": "02:43 PM"
+    },
+    {
+      "id": 1792482207637,
+      "text": "Reservation RES-1059 status updated to Confirmed",
+      "by": "Demo User",
+      "time": "02:43 PM"
+    },
+    {
+      "id": 1792482170156,
+      "text": "Reservation RES-1059 status updated to Arriving today",
+      "by": "Demo User",
+      "time": "02:42 PM"
+    },
+    {
+      "id": 1792482153092,
+      "text": "Reservation RES-1059 status updated to Confirmed",
+      "by": "Demo User",
+      "time": "02:42 PM"
+    },
+    {
+      "id": 1792482147621,
+      "text": "Reservation RES-1059 status updated to Cancelled",
+      "by": "Demo User",
+      "time": "02:42 PM"
+    },
+    {
+      "id": 1792481241381,
+      "text": "Reservation RES-1060 status updated to Checked out",
+      "by": "Demo User",
+      "time": "02:27 PM"
+    },
+    {
+      "id": 1792481235917,
+      "text": "Reservation RES-1060 status updated to Checked in",
+      "by": "Demo User",
+      "time": "02:27 PM"
+    },
+    {
+      "id": 1792481232933,
+      "text": "Reservation RES-1060 status updated to No-show",
+      "by": "Demo User",
+      "time": "02:27 PM"
+    },
+    {
+      "id": 1792481231653,
+      "text": "Reservation RES-1060 status updated to Cancelled",
+      "by": "Demo User",
+      "time": "02:27 PM"
+    },
+    {
+      "id": 1792481230526,
+      "text": "Reservation RES-1060 status updated to Confirmed",
+      "by": "Demo User",
+      "time": "02:27 PM"
+    },
+    {
+      "id": 1792481229381,
+      "text": "Reservation RES-1060 status updated to Arriving today",
+      "by": "Demo User",
+      "time": "02:27 PM"
+    },
+    {
+      "id": 1792480881373,
+      "text": "Reservation RES-1060 status updated to Cancelled",
+      "by": "Demo User",
+      "time": "02:21 PM"
+    },
+    {
+      "id": 1792480858148,
+      "text": "Reservation RES-1060 status updated to Checked out",
+      "by": "Demo User",
+      "time": "02:20 PM"
+    },
+    {
+      "id": 1792480852396,
+      "text": "Reservation RES-1060 status updated to Checked in",
+      "by": "Demo User",
+      "time": "02:20 PM"
+    },
+    {
+      "id": 1792480834379,
+      "text": "Reservation RES-1060 status updated to Confirmed",
+      "by": "Demo User",
+      "time": "02:20 PM"
+    },
+    {
+      "id": 1792480755809,
+      "text": "Reservation RES-1060 status updated to Cancelled",
+      "by": "Demo User",
+      "time": "02:19 PM"
+    },
+    {
+      "id": 1792480728642,
+      "text": "Reservation RES-1060 status updated to Checked in",
+      "by": "Demo User",
+      "time": "02:18 PM"
+    },
+    {
+      "id": 1792480716729,
+      "text": "Reservation RES-1060 status updated to Arriving today",
+      "by": "Demo User",
+      "time": "02:18 PM"
+    },
+    {
+      "id": 1792480707296,
+      "text": "Reservation RES-1060 status updated to Confirmed",
+      "by": "Demo User",
+      "time": "02:18 PM"
+    },
+    {
+      "id": 1792480672679,
+      "text": "Reservation RES-1060 status updated to Arriving today",
+      "by": "Demo User",
+      "time": "02:17 PM"
+    },
+    {
+      "id": 1792480516519,
+      "text": "Reservation RES-1060 status updated to Confirmed",
+      "by": "Demo User",
+      "time": "02:15 PM"
+    },
+    {
+      "id": 1792480511703,
+      "text": "Reservation RES-1060 status updated to Cancelled",
+      "by": "Demo User",
+      "time": "02:15 PM"
+    },
+    {
+      "id": 1792480489321,
+      "text": "Reservation RES-1060 status updated to Checked out",
+      "by": "Demo User",
+      "time": "02:14 PM"
+    },
+    {
+      "id": 1792480479151,
+      "text": "Reservation RES-1059 status updated to Confirmed",
+      "by": "Demo User",
+      "time": "02:14 PM"
+    },
+    {
+      "id": 1792480440692,
+      "text": "Reservation RES-1059 status updated to Checked out",
+      "by": "Demo User",
+      "time": "02:14 PM"
+    },
+    {
+      "id": 1792479362575,
+      "text": "Reservation RES-1060 created for Kim",
+      "by": "Demo User",
+      "time": "01:56 PM"
+    },
+    {
+      "id": 1792478760932,
+      "text": "Reservation RES-1059 created for Willy",
+      "by": "Demo User",
+      "time": "01:46 PM"
+    },
+    {
+      "id": 1792378799695,
+      "text": "Reservation RES-1058 created for Bill Tran",
+      "by": "Demo User",
+      "time": "09:59 AM"
+    },
+    {
+      "id": 1,
+      "text": "Reservation RES-1048 checked in",
+      "by": "Front Desk",
+      "time": "09:12"
+    },
+    {
+      "id": 2,
+      "text": "Expense EXP-022 submitted for approval",
+      "by": "Hotel B",
+      "time": "08:45"
+    },
+    {
+      "id": 3,
+      "text": "Room 303 marked for cleaning",
+      "by": "Housekeeping",
+      "time": "08:20"
+    }
+  ]
+}
