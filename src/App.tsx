@@ -438,12 +438,22 @@ function Reservations({ property }: { property: string }) {
   }, [open, selectedProperty]);  async function submit(e: FormEvent<HTMLFormElement>) { e.preventDefault(); const f = new FormData(e.currentTarget); try { await api.createReservation({ guest:f.get('guest'), propertyId:f.get('propertyId'), room:f.get('room'), checkIn:f.get('checkIn'), checkOut:f.get('checkOut'), guests:f.get('guests'), amount:f.get('amount'), source:f.get('source') }); setOpen(false); load(); } catch(e:any) { alert(e.message); } }
   return <><PageHeader eyebrow="HOTEL OPERATIONS" title="Reservations" description="Manage guest bookings, stay dates, and booking status." actions={<Button onClick={() => setOpen(true)}><Plus size={16}/> New reservation</Button>}/><div className="toolbar"><SearchBar value={query} onChange={setQuery} placeholder="Search guest, booking ID, source…"/><div className="toolbar-right"><Badge tone="info">{rows.length} bookings</Badge><Button variant="secondary" onClick={load}><RefreshCw size={15}/> Refresh</Button></div></div>{error && <div className="notice error">{error}</div>}<Panel title="All reservations" subtitle="Sample bookings from the simulated API">{loading ? <div className="loading">Loading reservations…</div> : <ReservationTable rows={rows} onStatusChange={changeReservationStatus} onDelete={deleteReservation}/>}</Panel>{open && <Modal title="Create reservation" onClose={() => setOpen(false)}><form className="form-grid" onSubmit={submit}><label className="span-2">Guest full name<input name="guest" required placeholder="Enter guest name"/></label><label>Hotel<select name="propertyId" value={selectedProperty} onChange={e => { setSelectedProperty(e.target.value); setSelectedRoom(""); }}><option value="hotel-a">Hotel A</option><option value="hotel-b">Hotel B</option></select></label><label>Room number<select name="room" required value={selectedRoom} onChange={e => setSelectedRoom(e.target.value)}><option value="">Select an available room</option>{roomOptions.map((room: AnyRow) => <option key={room.id} value={room.number}>{room.number} · {room.type} · Floor {room.floor}</option>)}</select>{roomOptions.length === 0 && <small>No rooms available for these dates.</small>}</label><label>Check-in<input type="date" name="checkIn" required min={today} value={checkInDate} onChange={e => setCheckInDate(e.target.value)} /></label><label>Check-out<input type="date" name="checkOut" required min={checkInDate || undefined} value={checkOutDate} onChange={e => setCheckOutDate(e.target.value)} /></label><label>Guests<input type="number" name="guests" min="1" defaultValue="2"/></label><label>Amount (VND)<input type="number" name="amount" min="0" defaultValue="1500000"/></label><label className="span-2">Booking source<select name="source"><option>Direct</option><option>Phone</option><option>Walk-in</option><option>Booking.com</option><option>Agoda</option><option>Travel agent</option></select></label><div className="form-actions span-2"><Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button><Button type="submit">Create reservation</Button></div></form></Modal>}</>;
 }
+
+function urlBase64ToUint8Array(base64String: string): Uint8Array {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  return Uint8Array.from(Array.from(rawData).map(char => char.charCodeAt(0)));
+}
+
 function Rooms({ property }: { property: string }) {
   const [rows, setRows] = useState<AnyRow[]>([]);
   const [query, setQuery] = useState('');
   const [noteDrafts, setNoteDrafts] = useState<Record<string, string>>({});
   const [selectedNoteRoom, setSelectedNoteRoom] = useState<AnyRow | null>(null);
   const [savingNotes, setSavingNotes] = useState<Record<string, boolean>>({});
+  const [pushState, setPushState] = useState('');
+  const [pushBusy, setPushBusy] = useState(false);
 
   const load = () => api.rooms(query).then(r => {
     const filtered = r.data.filter((x: AnyRow) => property === 'all' || x.propertyId === property);
@@ -465,6 +475,60 @@ function Rooms({ property }: { property: string }) {
       load();
     } catch (e: any) {
       alert(e.message || 'Could not update room status.');
+    }
+  }
+
+
+  async function enableNotifications() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+      setPushState('Push notifications are not supported by this browser.');
+      return;
+    }
+
+    setPushBusy(true);
+    setPushState('');
+
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        setPushState('Notifications were not allowed. Check your browser or iPhone settings.');
+        return;
+      }
+
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      await navigator.serviceWorker.ready;
+
+      let subscription: PushSubscription | null = await registration.pushManager.getSubscription();
+
+      if (!subscription) {
+        const keyResponse = await fetch('/api/v1/push/public-key');
+        const keyData = await keyResponse.json();
+        if (!keyResponse.ok || !keyData.publicKey) {
+          throw new Error(keyData.error || 'Could not get the push notification key.');
+        }
+
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(keyData.publicKey)
+        });
+      }
+
+      const saveResponse = await fetch('/api/v1/push/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(subscription)
+      });
+      const saveData = await saveResponse.json();
+
+      if (!saveResponse.ok) {
+        throw new Error(saveData.error || 'Could not save this device subscription.');
+      }
+
+      setPushState('Notifications enabled on this device.');
+    } catch (e: any) {
+      setPushState(e.message || 'Could not enable notifications.');
+    } finally {
+      setPushBusy(false);
     }
   }
 
@@ -490,7 +554,7 @@ function Rooms({ property }: { property: string }) {
   }), [rows]);
 
   return <>
-    <PageHeader eyebrow="HOTEL OPERATIONS" title="Room management" description="View room availability, update operational status, and maintain room notes." actions={<Button variant="secondary" onClick={load}><RefreshCw size={15}/> Refresh</Button>}/>
+    <PageHeader eyebrow="HOTEL OPERATIONS" title="Room management" description="View room availability, update operational status, and maintain room notes." actions={<><Button variant="secondary" onClick={load}><RefreshCw size={15}/> Refresh</Button><Button onClick={() => { if (!pushBusy) void enableNotifications(); }}><Bell size={15}/> {pushBusy ? "Enabling…" : "Enable Notifications"}</Button></>}/>
     <div className="mini-stat-grid">
       <div><span>Clean / available</span><strong>{counts.available}</strong></div>
       <div><span>Occupied</span><strong>{counts.occupied}</strong></div>
@@ -502,6 +566,7 @@ function Rooms({ property }: { property: string }) {
       <SearchBar value={query} onChange={setQuery} placeholder="Search room number or type…"/>
       <span className="muted">{rows.length} rooms</span>
     </div>
+    {pushState && <p role="status" className="muted">{pushState}</p>}
     <div className="room-grid">
       {rows.map(room => <div className={"room-card status-" + room.status.toLowerCase().replace(' ','-')} key={room.id}>
         <div className="room-card-top">

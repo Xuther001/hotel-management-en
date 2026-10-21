@@ -11,24 +11,27 @@
     "start:api": "tsx server/index.ts"
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^18.0.8",
     "express": "^5.1.0",
     "lucide-react": "^0.468.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "recharts": "^2.15.0",
     "react-router-dom": "^7.1.0",
-    "cors": "^2.8.5"
+    "recharts": "^2.15.0",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@types/web-push": "^3.6.4",
     "@vitejs/plugin-react": "^4.3.4",
     "concurrently": "^9.1.0",
     "tsx": "^4.19.2",
     "typescript": "~5.7.2",
-    "vite": "^6.0.7",
-    "@types/cors": "^2.8.17"
+    "vite": "^6.0.7"
   }
 }

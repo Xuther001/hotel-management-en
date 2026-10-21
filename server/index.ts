@@ -1,4 +1,6 @@
+import 'dotenv/config';
 import express from 'express';
+import webpush from 'web-push';
 import cors from 'cors';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,6 +13,39 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dataPath = path.join(__dirname, 'data.json');
 
 type AnyRecord = Record<string, any>;
+
+const pushSubscriptionsPath = path.join(__dirname, 'push-subscriptions.json');
+
+function readPushSubscriptions(): any[] {
+  try {
+    if (!fs.existsSync(pushSubscriptionsPath)) return [];
+    const value = JSON.parse(fs.readFileSync(pushSubscriptionsPath, 'utf8'));
+    return Array.isArray(value) ? value : [];
+  } catch (error) {
+    console.error('Could not read push subscriptions:', error);
+    return [];
+  }
+}
+
+function writePushSubscriptions(subscriptions: any[]) {
+  fs.writeFileSync(pushSubscriptionsPath, JSON.stringify(subscriptions, null, 2), 'utf8');
+}
+
+function removePushSubscription(endpoint: string) {
+  writePushSubscriptions(
+    readPushSubscriptions().filter((s: any) => s.endpoint !== endpoint)
+  );
+}
+
+function configureWebPush() {
+  const publicKey = process.env.VAPID_PUBLIC_KEY;
+  const privateKey = process.env.VAPID_PRIVATE_KEY;
+  const subject = process.env.VAPID_SUBJECT;
+  if (!publicKey || !privateKey || !subject) return false;
+  webpush.setVapidDetails(subject, publicKey, privateKey);
+  return true;
+}
+
 function initialData() {
   return {
     properties: [
@@ -546,13 +581,93 @@ app.delete('/api/v1/reservations/:id', (req, res) => {
   res.json({ message: 'Reservation permanently deleted.', data: deleted });
 });
 
+app.get('/api/v1/push/public-key', (_req, res) => {
+  if (!process.env.VAPID_PUBLIC_KEY || !configureWebPush()) {
+    return res.status(503).json({ error: 'Push notifications are not configured on the server.' });
+  }
+  res.json({ publicKey: process.env.VAPID_PUBLIC_KEY });
+});
+
+app.post('/api/v1/push/subscribe', (req, res) => {
+  if (!configureWebPush()) {
+    return res.status(503).json({ error: 'Push notifications are not configured on the server.' });
+  }
+
+  const subscription = req.body;
+  if (
+    !subscription ||
+    typeof subscription.endpoint !== 'string' ||
+    !subscription.endpoint.startsWith('https://') ||
+    typeof subscription.keys?.p256dh !== 'string' ||
+    typeof subscription.keys?.auth !== 'string'
+  ) {
+    return res.status(400).json({ error: 'Invalid push subscription.' });
+  }
+
+  try {
+    const subscriptions = readPushSubscriptions();
+    const index = subscriptions.findIndex((s: any) => s.endpoint === subscription.endpoint);
+    if (index >= 0) subscriptions[index] = subscription;
+    else subscriptions.push(subscription);
+    writePushSubscriptions(subscriptions);
+    res.status(201).json({ ok: true });
+  } catch (error) {
+    console.error('Could not save push subscription:', error);
+    res.status(500).json({ error: 'Could not save push subscription.' });
+  }
+});
+
+app.post('/api/v1/push/unsubscribe', (req, res) => {
+  if (typeof req.body?.endpoint !== 'string') {
+    return res.status(400).json({ error: 'Subscription endpoint is required.' });
+  }
+  try {
+    removePushSubscription(req.body.endpoint);
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Could not remove push subscription:', error);
+    res.status(500).json({ error: 'Could not remove push subscription.' });
+  }
+});
+
 app.get('/api/v1/rooms', (req, res) => res.json(list(readData().rooms, req)));
-app.patch('/api/v1/rooms/:id/status', (req, res) => {
-  const d = readData(); const item = d.rooms.find((x: AnyRecord) => x.id === req.params.id);
+app.patch('/api/v1/rooms/:id/status', async (req, res) => {
+  const d = readData();
+  const item = d.rooms.find((x: AnyRecord) => x.id === req.params.id);
   if (!item) return res.status(404).json({ error: 'Room not found.' });
+
   const allowed = ['Clean', 'Dirty', 'Occupied', 'Maintenance', 'Inspected'];
-  if (!allowed.includes(req.body.status)) return res.status(400).json({ error: 'Invalid room status.' });
-  item.status = req.body.status; writeData(d); res.json({ data: item });
+  if (!allowed.includes(req.body.status)) {
+    return res.status(400).json({ error: 'Invalid room status.' });
+  }
+
+  const previousStatus = item.status;
+  item.status = req.body.status;
+  writeData(d);
+
+  if (previousStatus !== 'Clean' && item.status === 'Clean' && configureWebPush()) {
+    const property = d.properties.find((x: AnyRecord) => x.id === item.propertyId);
+    const payload = JSON.stringify({
+      title: 'Room marked Clean',
+      body: `Room ${item.number} at ${property?.name || 'your hotel'} is now Clean.`,
+      url: '/rooms'
+    });
+
+    await Promise.all(readPushSubscriptions().map(async (subscription: any) => {
+      try {
+        await webpush.sendNotification(subscription, payload);
+      } catch (error: any) {
+        if (error?.statusCode === 404 || error?.statusCode === 410) {
+          try { removePushSubscription(subscription.endpoint); }
+          catch (removeError) { console.error('Could not remove expired subscription:', removeError); }
+        } else {
+          console.error('Push notification failed:', error?.message || error);
+        }
+      }
+    }));
+  }
+
+  res.json({ data: item });
 });
 app.patch('/api/v1/rooms/:id/note', (req, res) => {
   const d = readData();

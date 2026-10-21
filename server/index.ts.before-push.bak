@@ -1,0 +1,594 @@
+import express from 'express';
+import cors from 'cors';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const dataPath = path.join(__dirname, 'data.json');
+
+type AnyRecord = Record<string, any>;
+function initialData() {
+  return {
+    properties: [
+      { id: 'hotel-a', name: 'Hotel A', city: 'Ho Chi Minh City', rooms: 34, occupancy: 82, revenue: 1400000000 },
+      { id: 'hotel-b', name: 'Hotel B', city: 'Ho Chi Minh City', rooms: 0, occupancy: 69, revenue: 1000000000 }
+    ],
+    reservations: [
+      { id: 'RES-1048', guest: 'Nguyen Minh Anh', room: '305', propertyId: 'hotel-a', checkIn: '2026-10-19', checkOut: '2026-10-22', guests: 2, status: 'Checked in', source: 'Direct', amount: 4500000 },
+      { id: 'RES-1049', guest: 'Tran Quoc Bao', room: '212', propertyId: 'hotel-b', checkIn: '2026-10-19', checkOut: '2026-10-21', guests: 1, status: 'Confirmed', source: 'Booking.com', amount: 2600000 },
+      { id: 'RES-1050', guest: 'Le Thu Ha', room: '408', propertyId: 'hotel-a', checkIn: '2026-10-19', checkOut: '2026-10-20', guests: 2, status: 'Arriving today', source: 'Phone', amount: 1800000 },
+      { id: 'RES-1051', guest: 'Pham Gia Huy', room: '118', propertyId: 'hotel-b', checkIn: '2026-10-20', checkOut: '2026-10-24', guests: 3, status: 'Confirmed', source: 'Agoda', amount: 5200000 },
+      { id: 'RES-1052', guest: 'Vo Ngoc Linh', room: '501', propertyId: 'hotel-a', checkIn: '2026-10-21', checkOut: '2026-10-23', guests: 2, status: 'Confirmed', source: 'Direct', amount: 3100000 }
+    ],
+    rooms: [
+      {
+        "id": "A-G01",
+        "number": "G01",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": "G"
+      },
+      {
+        "id": "A-G02",
+        "number": "G02",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": "G"
+      },
+      {
+        "id": "A-101",
+        "number": "101",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 1
+      },
+      {
+        "id": "A-102",
+        "number": "102",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 1
+      },
+      {
+        "id": "A-103",
+        "number": "103",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 1
+      },
+      {
+        "id": "A-104",
+        "number": "104",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 1
+      },
+      {
+        "id": "A-105",
+        "number": "105",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 1
+      },
+      {
+        "id": "A-106",
+        "number": "106",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 1
+      },
+      {
+        "id": "A-201",
+        "number": "201",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 2
+      },
+      {
+        "id": "A-202",
+        "number": "202",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 2
+      },
+      {
+        "id": "A-203",
+        "number": "203",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 2
+      },
+      {
+        "id": "A-204",
+        "number": "204",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 2
+      },
+      {
+        "id": "A-205",
+        "number": "205",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 2
+      },
+      {
+        "id": "A-206",
+        "number": "206",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 2
+      },
+      {
+        "id": "A-301",
+        "number": "301",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 3
+      },
+      {
+        "id": "A-302",
+        "number": "302",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 3
+      },
+      {
+        "id": "A-303",
+        "number": "303",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 3
+      },
+      {
+        "id": "A-304",
+        "number": "304",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 3
+      },
+      {
+        "id": "A-305",
+        "number": "305",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 3
+      },
+      {
+        "id": "A-401",
+        "number": "401",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 4
+      },
+      {
+        "id": "A-402",
+        "number": "402",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 4
+      },
+      {
+        "id": "A-403",
+        "number": "403",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 4
+      },
+      {
+        "id": "A-404",
+        "number": "404",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 4
+      },
+      {
+        "id": "A-405",
+        "number": "405",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 4
+      },
+      {
+        "id": "A-501",
+        "number": "501",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 5
+      },
+      {
+        "id": "A-502",
+        "number": "502",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 5
+      },
+      {
+        "id": "A-503",
+        "number": "503",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 5
+      },
+      {
+        "id": "A-504",
+        "number": "504",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 5
+      },
+      {
+        "id": "A-505",
+        "number": "505",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 5
+      },
+      {
+        "id": "A-601",
+        "number": "601",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 6
+      },
+      {
+        "id": "A-602",
+        "number": "602",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 6
+      },
+      {
+        "id": "A-603",
+        "number": "603",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 6
+      },
+      {
+        "id": "A-604",
+        "number": "604",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 6
+      },
+      {
+        "id": "A-605",
+        "number": "605",
+        "type": "Standard Room",
+        "propertyId": "hotel-a",
+        "status": "Clean",
+        "floor": 6
+      }
+    ],
+    employees: [
+      { id: 'EMP-001', name: 'Nguyen Thi Mai', jobTitle: 'Receptionist', property: 'Hotel A', status: 'On shift', department: 'Front Office', salary: 12000000 },
+      { id: 'EMP-002', name: 'Tran Van Duc', jobTitle: 'Housekeeper', property: 'Hotel A', status: 'On shift', department: 'Housekeeping', salary: 9000000 },
+      { id: 'EMP-003', name: 'Le Thanh Vy', jobTitle: 'Hotel Manager', property: 'Hotel B', status: 'On shift', department: 'Management', salary: 22000000 },
+      { id: 'EMP-004', name: 'Pham Hoang Nam', jobTitle: 'Accountant', property: 'Group', status: 'On leave', department: 'Finance', salary: 16000000 },
+    ],
+    expenses: [
+      { id: 'EXP-021', date: '2026-10-18', category: 'Utilities', property: 'Hotel A', description: 'Electricity bill', amount: 28500000, status: 'Approved' },
+      { id: 'EXP-022', date: '2026-10-18', category: 'Supplies', property: 'Hotel B', description: 'Guest amenities', amount: 7400000, status: 'Pending' },
+      { id: 'EXP-023', date: '2026-10-17', category: 'Maintenance', property: 'Hotel A', description: 'Air conditioning service', amount: 5200000, status: 'Approved' },
+    ],
+    tasks: [
+      { id: 'TASK-01', title: 'Inspect room 304 air conditioner', property: 'Hotel A', priority: 'High', status: 'Overdue', assignee: 'Maintenance team' },
+      { id: 'TASK-02', title: 'Prepare rooms 303 and 203', property: 'Both hotels', priority: 'Normal', status: 'In progress', assignee: 'Housekeeping' },
+      { id: 'TASK-03', title: 'Renew employee contract', property: 'Hotel B', priority: 'Normal', status: 'Pending', assignee: 'HR' }
+    ],
+    activity: [
+      { id: 1, text: 'Reservation RES-1048 checked in', by: 'Front Desk', time: '09:12' },
+      { id: 2, text: 'Expense EXP-022 submitted for approval', by: 'Hotel B', time: '08:45' },
+      { id: 3, text: 'Room 303 marked for cleaning', by: 'Housekeeping', time: '08:20' }
+    ]
+  };
+}
+function readData(): AnyRecord {
+  if (!fs.existsSync(dataPath)) fs.writeFileSync(dataPath, JSON.stringify(initialData(), null, 2));
+  return JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+}
+function writeData(data: AnyRecord) { fs.writeFileSync(dataPath, JSON.stringify(data, null, 2)); }
+function list<T extends AnyRecord>(items: T[], req: express.Request) {
+  const q = String(req.query.q || '').toLowerCase();
+  const propertyId = String(req.query.property_id || '');
+  const filtered = items.filter(x => (!q || JSON.stringify(x).toLowerCase().includes(q)) &&
+    (!propertyId || x.propertyId === propertyId || x.property === propertyId || propertyId === 'all'));
+  return { data: filtered, total: filtered.length };
+}
+app.get('/api/v1/health', (_req, res) => res.json({ status: 'ok', mode: 'simulated-api', warning: 'Demo data only' }));
+app.get('/api/v1/auth/me', (_req, res) => res.json({ data: { id: 'demo-owner', name: 'Business Owner', role: 'Owner', permissions: ['*'] } }));
+app.post('/api/v1/auth/login', (_req, res) => res.json({ data: { user: { id: 'demo-owner', name: 'Business Owner', role: 'Owner' }, demo: true, message: 'Demo login only; authentication is not implemented.' } }));
+
+app.get('/api/v1/properties', (_req, res) => res.json({ data: readData().properties }));
+app.get('/api/v1/dashboard/overview', (req, res) => {
+  const d = readData();
+  const propertyId = String(req.query.property_id || 'all');
+  const properties = propertyId === 'all' ? d.properties : d.properties.filter((p: AnyRecord) => p.id === propertyId);
+  const reservations = propertyId === 'all' ? d.reservations : d.reservations.filter((x: AnyRecord) => x.propertyId === propertyId);
+  const employees = d.employees;
+  const revenue = reservations
+    .filter((r: AnyRecord) => r.status === 'Checked out')
+    .reduce((sum: number, r: AnyRecord) => sum + Number(r.amount || 0), 0);
+  const rooms = properties.reduce((s: number, p: AnyRecord) => s + p.rooms, 0);
+  const weighted = properties.reduce((s: number, p: AnyRecord) => s + p.rooms * p.occupancy, 0);
+  res.json({ data: {
+    revenue, operatingProfit: Math.round(revenue * 0.30), occupancy: rooms ? Math.round(weighted / rooms) : 0,
+    employeeCount: employees.length, arrivals: reservations.filter((r: AnyRecord) => r.status === 'Arriving today').length,
+    departures: reservations.filter((r: AnyRecord) => r.checkOut === '2026-10-19').length,
+    properties, reservations: reservations.slice(0, 5), tasks: d.tasks, activity: d.activity,
+    revenueTrend: [
+      { month: 'May', hotelA: 1120, hotelB: 890 }, { month: 'Jun', hotelA: 1180, hotelB: 930 },
+      { month: 'Jul', hotelA: 1320, hotelB: 970 }, { month: 'Aug', hotelA: 1250, hotelB: 1010 },
+      { month: 'Sep', hotelA: 1370, hotelB: 980 }, { month: 'Oct', hotelA: 1400, hotelB: 1000 }
+    ]
+  }});
+});
+app.get('/api/v1/reservations', (req, res) => res.json(list(readData().reservations, req)));
+app.post('/api/v1/reservations', (req, res) => {
+  const d = readData();
+  const body = req.body || {};
+
+  if (!body.guest || !body.checkIn || !body.checkOut || !body.propertyId || !body.room) {
+    return res.status(400).json({ error: 'Guest, hotel, room, check-in, and check-out are required.' });
+  }
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  if (body.checkIn < today) {
+    return res.status(400).json({ error: 'Check-in cannot be in the past.' });
+  }
+  if (body.checkOut <= body.checkIn) {
+    return res.status(400).json({ error: 'Check-out must be after check-in.' });
+  }
+
+  const room = d.rooms.find((r: AnyRecord) =>
+    String(r.number) === String(body.room) &&
+    r.propertyId === body.propertyId
+  );
+
+  if (!room) {
+    return res.status(400).json({ error: 'The selected room does not belong to this hotel.' });
+  }
+  if (room.status === 'Maintenance') {
+    return res.status(400).json({ error: 'This room is under maintenance and cannot be reserved.' });
+  }
+
+  const conflict = d.reservations.find((r: AnyRecord) => {
+    const status = String(r.status || '').toLowerCase();
+    const released = ['cancelled', 'canceled', 'no-show', 'no show'].includes(status);
+    return !released &&
+      r.propertyId === body.propertyId &&
+      String(r.room) === String(body.room) &&
+      r.checkIn < body.checkOut &&
+      r.checkOut > body.checkIn;
+  });
+
+  if (conflict) {
+    return res.status(409).json({
+      error: `Cannot create reservation: Room ${body.room} is already reserved for ${conflict.guest} (${conflict.checkIn} to ${conflict.checkOut}). Your requested stay is ${body.checkIn} to ${body.checkOut}. Please choose another room or dates.`
+    });
+  }
+
+  const id = `RES-${1053 + d.reservations.length}`;
+  const item = {
+    id,
+    guest: String(body.guest).trim(),
+    room: String(body.room),
+    propertyId: body.propertyId,
+    checkIn: body.checkIn,
+    checkOut: body.checkOut,
+    guests: Number(body.guests || 1),
+    status: 'Confirmed',
+    source: body.source || 'Direct',
+    amount: Number(body.amount || 0)
+  };
+
+  d.reservations.unshift(item);
+  d.activity.unshift({
+    id: Date.now(),
+    text: `Reservation ${id} created for ${item.guest}`,
+    by: 'Demo User',
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  });
+  writeData(d);
+  res.status(201).json({ data: item });
+});
+app.patch('/api/v1/reservations/:id', (req, res) => {
+  const d = readData();
+  const item = d.reservations.find((x: AnyRecord) => x.id === req.params.id);
+  if (!item) return res.status(404).json({ error: 'Reservation not found.' });
+
+  const body = req.body || {};
+  const allowedStatuses = ['Confirmed', 'Arriving today', 'Checked in', 'Checked out', 'Cancelled', 'No-show'];
+
+  if (body.status !== undefined && !allowedStatuses.includes(body.status)) {
+    return res.status(400).json({ error: 'Invalid reservation status.' });
+  }
+
+  const updated = { ...item, ...body };
+
+  if (!updated.guest || !updated.propertyId || !updated.room || !updated.checkIn || !updated.checkOut) {
+    return res.status(400).json({ error: 'Guest, hotel, room, check-in, and check-out are required.' });
+  }
+  if (updated.checkOut <= updated.checkIn) {
+    return res.status(400).json({ error: 'Check-out must be after check-in.' });
+  }
+
+  if (body.checkIn !== undefined) {
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    if (updated.checkIn < today) {
+      return res.status(400).json({ error: 'Check-in cannot be in the past.' });
+    }
+  }
+
+  const status = String(updated.status || '').toLowerCase();
+  const releasedStatuses = ['cancelled', 'canceled', 'no-show', 'no show'];
+  const roomOrDatesChanged =
+    body.room !== undefined ||
+    body.propertyId !== undefined ||
+    body.checkIn !== undefined ||
+    body.checkOut !== undefined;
+
+  if (!releasedStatuses.includes(status) && (roomOrDatesChanged || body.status !== undefined)) {
+    const room = d.rooms.find((r: AnyRecord) =>
+      String(r.number) === String(updated.room) &&
+      r.propertyId === updated.propertyId
+    );
+
+    if (!room) {
+      return res.status(400).json({ error: 'The selected room does not belong to this hotel.' });
+    }
+    if (room.status === 'Maintenance' && updated.status !== 'Checked out') {
+      return res.status(400).json({ error: 'This room is under maintenance and cannot be assigned to an active reservation.' });
+    }
+
+    const conflict = d.reservations.some((r: AnyRecord) => {
+      if (r.id === item.id) return false;
+      const otherStatus = String(r.status || '').toLowerCase();
+      return !releasedStatuses.includes(otherStatus) &&
+        r.propertyId === updated.propertyId &&
+        String(r.room) === String(updated.room) &&
+        r.checkIn < updated.checkOut &&
+        r.checkOut > updated.checkIn;
+    });
+
+    if (conflict) {
+      return res.status(409).json({
+        error: 'This room is already booked for some or all of those dates.'
+      });
+    }
+  }
+
+  Object.assign(item, updated);
+
+  if (body.status === 'Checked in' || body.status === 'Checked out') {
+    const room = d.rooms.find((r: AnyRecord) =>
+      String(r.number) === String(item.room) &&
+      r.propertyId === item.propertyId
+    );
+    if (room) {
+      room.status = body.status === 'Checked in' ? 'Occupied' : 'Dirty';
+    }
+  }
+
+  d.activity.unshift({
+    id: Date.now(),
+    text: `Reservation ${item.id} status updated to ${item.status}`,
+    by: 'Demo User',
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  });
+
+  writeData(d);
+  res.json({ data: item });
+});
+app.delete('/api/v1/reservations/:id', (req, res) => {
+  const d = readData();
+  const index = d.reservations.findIndex(
+    (x: AnyRecord) => x.id === req.params.id
+  );
+
+  if (index === -1) {
+    return res.status(404).json({ error: 'Reservation not found.' });
+  }
+
+  const [deleted] = d.reservations.splice(index, 1);
+
+  d.activity.unshift({
+    id: Date.now(),
+    text: `Reservation ${deleted.id} for ${deleted.guest} permanently deleted`,
+    by: 'Demo User',
+    time: new Date().toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  });
+
+  writeData(d);
+  res.json({ message: 'Reservation permanently deleted.', data: deleted });
+});
+
+app.get('/api/v1/rooms', (req, res) => res.json(list(readData().rooms, req)));
+app.patch('/api/v1/rooms/:id/status', (req, res) => {
+  const d = readData(); const item = d.rooms.find((x: AnyRecord) => x.id === req.params.id);
+  if (!item) return res.status(404).json({ error: 'Room not found.' });
+  const allowed = ['Clean', 'Dirty', 'Occupied', 'Maintenance', 'Inspected'];
+  if (!allowed.includes(req.body.status)) return res.status(400).json({ error: 'Invalid room status.' });
+  item.status = req.body.status; writeData(d); res.json({ data: item });
+});
+app.patch('/api/v1/rooms/:id/note', (req, res) => {
+  const d = readData();
+  const item = d.rooms.find((x: AnyRecord) => x.id === req.params.id);
+  if (!item) return res.status(404).json({ error: 'Room not found.' });
+  if (typeof req.body.note !== 'string') {
+    return res.status(400).json({ error: 'Note must be text.' });
+  }
+  if (req.body.note.length > 2000) {
+    return res.status(400).json({ error: 'Room notes cannot exceed 2000 characters.' });
+  }
+  item.note = req.body.note;
+  writeData(d);
+  res.json({ data: item });
+});
+
+app.get('/api/v1/employees', (req, res) => res.json(list(readData().employees, req)));
+app.post('/api/v1/employees', (req, res) => {
+  const d = readData(); if (!req.body.name || !String(req.body.name).trim()) return res.status(400).json({ error: 'Employee name is required.' }); const approvedJobTitles: Record<string, string> = { 'Front Office': 'Receptionist', Housekeeping: 'Housekeeper', Management: 'Hotel Manager', Finance: 'Accountant' }; if (!req.body.department || !Object.prototype.hasOwnProperty.call(approvedJobTitles, req.body.department) || req.body.jobTitle !== approvedJobTitles[req.body.department]) return res.status(400).json({ error: 'Select a valid department and its approved job title.' });
+  const item = { id: `EMP-${String(d.employees.length + 1).padStart(3, '0')}`, name: req.body.name, jobTitle: req.body.jobTitle, property: req.body.property || 'Group', status: 'Active', department: req.body.department || 'General', salary: Number(req.body.salary || 0) };
+  d.employees.push(item); writeData(d); res.status(201).json({ data: item });
+});
+app.delete('/api/v1/employees/:id', (req, res) => {
+  const d = readData();
+  const index = d.employees.findIndex((employee: any) => employee.id === req.params.id);
+  if (index === -1) return res.status(404).json({ error: 'Employee not found.' });
+  const [deleted] = d.employees.splice(index, 1);
+  writeData(d);
+  res.json({ data: deleted, message: 'Employee deleted.' });
+});
+app.get('/api/v1/finance/expenses', (req, res) => res.json(list(readData().expenses, req)));
+app.post('/api/v1/finance/expenses', (req, res) => {
+  const d = readData(); const item = { id: `EXP-${String(Date.now()).slice(-5)}`, date: req.body.date || new Date().toISOString().slice(0,10), category: req.body.category || 'Other', property: req.body.property || 'Hotel A', description: req.body.description || 'New expense', amount: Number(req.body.amount || 0), status: 'Pending' };
+  d.expenses.unshift(item); writeData(d); res.status(201).json({ data: item });
+});
+app.get('/api/v1/housekeeping/tasks', (_req, res) => res.json({ data: readData().tasks }));
+app.get('/api/v1/audit-logs', (_req, res) => res.json({ data: readData().activity }));
+app.use('/api', (_req, res) => res.status(404).json({ error: 'Simulated endpoint not implemented yet.' }));
+app.listen(4000, () => console.log('Simulated API listening at http://localhost:4000'));

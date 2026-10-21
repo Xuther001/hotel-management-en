@@ -1,0 +1,18 @@
+{
+  "name": "Hospitality Group Management",
+  "short_name": "Hospitality",
+  "description": "Hotel operations and housekeeping management",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#172b4d",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
