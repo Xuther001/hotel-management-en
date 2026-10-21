@@ -751,6 +751,92 @@ app.post('/api/v1/finance/expenses', (req, res) => {
 app.get('/api/v1/housekeeping/tasks', (_req, res) => res.json({ data: readData().tasks }));
 app.get('/api/v1/audit-logs', (_req, res) => res.json({ data: readData().activity }));
 
+app.get('/api/v1/backup/reservations/download', async (_req, res) => {
+  try {
+    const data = readData();
+    const reservations = Array.isArray(data.reservations) ? data.reservations : [];
+
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'Hospitality Group Management';
+    workbook.created = new Date();
+
+    const sheet = workbook.addWorksheet('Khách Đang Lưu Trú');
+
+    const dateText = (value: any): string => {
+      if (!value) return '';
+      const raw = value instanceof Date
+        ? value.toISOString().slice(0, 10)
+        : String(value).slice(0, 10);
+      const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      return match ? `${match[3]}/${match[2]}/${match[1]}` : String(value);
+    };
+
+    const utcDate = (value: any): number | null => {
+      if (!value) return null;
+      const raw = value instanceof Date
+        ? value.toISOString().slice(0, 10)
+        : String(value).slice(0, 10);
+      const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (!match) return null;
+      return Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+    };
+
+    sheet.columns = [
+      { header: 'STT', key: 'stt', width: 8 },
+      { header: 'PHÒNG', key: 'room', width: 14 },
+      { header: 'HỌ-TÊN', key: 'guest', width: 30 },
+      { header: 'CHECK-IN', key: 'checkIn', width: 16 },
+      { header: 'CHECK-OUT', key: 'checkOut', width: 16 },
+      { header: 'THỜI GIAN LƯU TRÚ', key: 'stay', width: 24 }
+    ];
+
+    sheet.addRows(reservations.map((row: any, index: number) => {
+      const start = utcDate(row.checkIn);
+      const end = utcDate(row.checkOut);
+      const stay = start === null || end === null
+        ? ''
+        : Math.round((end - start) / 86400000);
+
+      return {
+        stt: index + 1,
+        room: row.room ?? '',
+        guest: row.guest ?? '',
+        checkIn: dateText(row.checkIn),
+        checkOut: dateText(row.checkOut),
+        stay
+      };
+    }));
+
+    sheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    sheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF24476B' }
+    };
+    sheet.views = [{ state: 'frozen', ySplit: 1 }];
+    sheet.autoFilter = {
+      from: { row: 1, column: 1 },
+      to: { row: 1, column: 6 }
+    };
+
+    const attachment = Buffer.from(await workbook.xlsx.writeBuffer());
+    const filename = 'DS KHÁCH ĐANG LƯU TRÚ.xlsx';
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`
+    );
+    res.send(attachment);
+  } catch (error) {
+    console.error('Reservations Excel backup failed:', error);
+    res.status(500).json({ error: 'Failed to create reservations Excel backup' });
+  }
+});
+
 app.get('/api/v1/backup/download', async (_req, res) => {
   try {
     const data = readData();
@@ -778,7 +864,9 @@ app.get('/api/v1/backup/download', async (_req, res) => {
     info.getColumn(2).width = 55;
 
     for (const [name, rows] of collections) {
-      const sheetName = name.replace(/[\\/?*:\[\]]/g, '-').slice(0, 31) || 'Data';
+      const sheetName = name === 'reservations'
+        ? 'Khách Đang Lưu Trú'
+        : name.replace(/[\\/?*:\[\]]/g, '-').slice(0, 31) || 'Data';
       const sheet = workbook.addWorksheet(sheetName);
 
       if (name === 'reservations') {
@@ -871,14 +959,16 @@ app.get('/api/v1/backup/download', async (_req, res) => {
     }
 
     const attachment = Buffer.from(await workbook.xlsx.writeBuffer());
-    const filename = 'hospitality-group-backup-' +
-      new Date().toISOString().replace(/[:.]/g, '-') + '.xlsx';
+    const filename = 'Tất Cả Tài Liệu.xlsx';
 
     res.setHeader(
       'Content-Type',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     );
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`
+    );
     res.send(attachment);
   } catch (error) {
     console.error('Excel download failed:', error);
