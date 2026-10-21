@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import webpush from 'web-push';
+import ExcelJS from 'exceljs';
+import nodemailer from 'nodemailer';
 import cors from 'cors';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -729,5 +731,306 @@ app.post('/api/v1/finance/expenses', (req, res) => {
 });
 app.get('/api/v1/housekeeping/tasks', (_req, res) => res.json({ data: readData().tasks }));
 app.get('/api/v1/audit-logs', (_req, res) => res.json({ data: readData().activity }));
+
+app.get('/api/v1/backup/download', async (_req, res) => {
+  try {
+    const data = readData();
+    const collections = Object.entries(data).filter(
+      (entry): entry is [string, any[]] => Array.isArray(entry[1])
+    );
+
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'Hospitality Group Management';
+    workbook.created = new Date();
+
+    const info = workbook.addWorksheet('Backup Info');
+    info.addRows([
+      ['Hospitality Group Management - Data Backup'],
+      ['Created at', new Date().toISOString()],
+      ['Scope', 'All properties and all stored records'],
+      ['Collection', 'Record count'],
+      ...collections.map(([name, rows]) => [name, rows.length]),
+      ['Total collections', collections.length],
+      ['Total records', collections.reduce((sum, [, rows]) => sum + rows.length, 0)]
+    ]);
+    info.getRow(1).font = { bold: true, size: 16 };
+    info.getRow(4).font = { bold: true };
+    info.getColumn(1).width = 38;
+    info.getColumn(2).width = 55;
+
+    for (const [name, rows] of collections) {
+      const sheetName = name.replace(/[\\/?*:\[\]]/g, '-').slice(0, 31) || 'Data';
+      const sheet = workbook.addWorksheet(sheetName);
+
+      if (name === 'reservations') {
+        const dateText = (value: any): string => {
+          if (!value) return '';
+          const raw = value instanceof Date
+            ? value.toISOString().slice(0, 10)
+            : String(value).slice(0, 10);
+          const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+          return match ? `${match[3]}/${match[2]}/${match[1]}` : String(value);
+        };
+
+        const utcDate = (value: any): number | null => {
+          if (!value) return null;
+          const raw = value instanceof Date
+            ? value.toISOString().slice(0, 10)
+            : String(value).slice(0, 10);
+          const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+          if (!match) return null;
+          return Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+        };
+
+        sheet.columns = [
+          { header: 'STT', key: 'stt', width: 8 },
+          { header: 'PHÒNG', key: 'room', width: 14 },
+          { header: 'HỌ-TÊN', key: 'guest', width: 30 },
+          { header: 'CHECK-IN', key: 'checkIn', width: 16 },
+          { header: 'CHECK-OUT', key: 'checkOut', width: 16 },
+          { header: 'THỜI GIAN LƯU TRÚ', key: 'stay', width: 24 }
+        ];
+
+        sheet.addRows(rows.map((row, index) => {
+          const start = utcDate(row.checkIn);
+          const end = utcDate(row.checkOut);
+          const stay = start === null || end === null
+            ? ''
+            : Math.round((end - start) / 86400000);
+
+          return {
+            stt: index + 1,
+            room: row.room ?? '',
+            guest: row.guest ?? '',
+            checkIn: dateText(row.checkIn),
+            checkOut: dateText(row.checkOut),
+            stay
+          };
+        }));
+
+        sheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        sheet.getRow(1).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FF24476B' }
+        };
+        sheet.views = [{ state: 'frozen', ySplit: 1 }];
+        sheet.autoFilter = {
+          from: { row: 1, column: 1 },
+          to: { row: 1, column: 6 }
+        };
+        continue;
+      }
+
+      const keys = [...new Set(rows.flatMap(row => Object.keys(row)))];
+
+      if (!keys.length) {
+        sheet.addRow(['No records']);
+        continue;
+      }
+
+      sheet.columns = keys.map(key => ({
+        header: key,
+        key,
+        width: Math.min(
+          Math.max(key.length + 4, ...rows.map(row => String(row[key] ?? '').length + 2)),
+          40
+        )
+      }));
+      sheet.addRows(rows);
+      sheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      sheet.getRow(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF24476B' }
+      };
+      sheet.views = [{ state: 'frozen', ySplit: 1 }];
+      sheet.autoFilter = {
+        from: { row: 1, column: 1 },
+        to: { row: 1, column: keys.length }
+      };
+    }
+
+    const attachment = Buffer.from(await workbook.xlsx.writeBuffer());
+    const filename = 'hospitality-group-backup-' +
+      new Date().toISOString().replace(/[:.]/g, '-') + '.xlsx';
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(attachment);
+  } catch (error) {
+    console.error('Excel download failed:', error);
+    res.status(500).json({ error: 'Could not create the Excel backup.' });
+  }
+});
+
+app.post('/api/v1/backup/email', async (_req, res) => {
+  try {
+    const gmailUser = process.env.GMAIL_USER;
+    const gmailPassword = process.env.GMAIL_APP_PASSWORD;
+    const recipient = process.env.BACKUP_EMAIL_TO || 'xuther86@gmail.com';
+
+    if (!gmailUser || !gmailPassword) {
+      return res.status(500).json({
+        error: 'Email is not configured. Set GMAIL_USER and GMAIL_APP_PASSWORD in .env.'
+      });
+    }
+
+    const data = readData();
+    const collections = Object.entries(data).filter(
+      (entry): entry is [string, any[]] => Array.isArray(entry[1])
+    );
+
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'Hospitality Group Management';
+    workbook.created = new Date();
+
+    const info = workbook.addWorksheet('Backup Info');
+    info.addRows([
+      ['Hospitality Group Management - Data Backup'],
+      ['Created at', new Date().toISOString()],
+      ['Recipient', recipient],
+      ['Scope', 'All properties and all stored records'],
+      ['Collection', 'Record count'],
+      ...collections.map(([name, rows]) => [name, rows.length]),
+      ['Total collections', collections.length],
+      ['Total records', collections.reduce((sum, [, rows]) => sum + rows.length, 0)]
+    ]);
+    info.getRow(1).font = { bold: true, size: 16 };
+    info.getRow(5).font = { bold: true };
+    info.getColumn(1).width = 38;
+    info.getColumn(2).width = 65;
+
+    for (const [name, rows] of collections) {
+      const sheetName = name.replace(/[\\/?*[\]:]/g, '-').slice(0, 31) || 'Data';
+      const sheet = workbook.addWorksheet(sheetName);
+
+      if (name === 'reservations') {
+        const dateText = (value: any): string => {
+          if (!value) return '';
+          const raw = value instanceof Date
+            ? value.toISOString().slice(0, 10)
+            : String(value).slice(0, 10);
+          const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+          return match ? `${match[3]}/${match[2]}/${match[1]}` : String(value);
+        };
+
+        const utcDate = (value: any): number | null => {
+          if (!value) return null;
+          const raw = value instanceof Date
+            ? value.toISOString().slice(0, 10)
+            : String(value).slice(0, 10);
+          const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+          if (!match) return null;
+          return Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+        };
+
+        sheet.columns = [
+          { header: 'STT', key: 'stt', width: 8 },
+          { header: 'PHÒNG', key: 'room', width: 14 },
+          { header: 'HỌ-TÊN', key: 'guest', width: 30 },
+          { header: 'CHECK-IN', key: 'checkIn', width: 16 },
+          { header: 'CHECK-OUT', key: 'checkOut', width: 16 },
+          { header: 'THỜI GIAN LƯU TRÚ', key: 'stay', width: 24 }
+        ];
+
+        sheet.addRows(rows.map((row, index) => {
+          const start = utcDate(row.checkIn);
+          const end = utcDate(row.checkOut);
+          const stay = start === null || end === null
+            ? ''
+            : Math.round((end - start) / 86400000);
+
+          return {
+            stt: index + 1,
+            room: row.room ?? '',
+            guest: row.guest ?? '',
+            checkIn: dateText(row.checkIn),
+            checkOut: dateText(row.checkOut),
+            stay
+          };
+        }));
+
+        sheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        sheet.getRow(1).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FF24476B' }
+        };
+        sheet.views = [{ state: 'frozen', ySplit: 1 }];
+        sheet.autoFilter = {
+          from: { row: 1, column: 1 },
+          to: { row: 1, column: 6 }
+        };
+        continue;
+      }
+
+      const keys = [...new Set(rows.flatMap(row => Object.keys(row)))];
+
+      if (!keys.length) {
+        sheet.addRow(['No records']);
+        continue;
+      }
+
+      sheet.columns = keys.map(key => ({
+        header: key,
+        key,
+        width: Math.min(
+          Math.max(key.length + 4, ...rows.map(row => String(row[key] ?? '').length + 2)),
+          40
+        )
+      }));
+      sheet.addRows(rows);
+      sheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      sheet.getRow(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF24476B' }
+      };
+      sheet.views = [{ state: 'frozen', ySplit: 1 }];
+      sheet.autoFilter = {
+        from: { row: 1, column: 1 },
+        to: { row: 1, column: keys.length }
+      };
+    }
+
+    const attachment = Buffer.from(await workbook.xlsx.writeBuffer());
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: { user: gmailUser, pass: gmailPassword }
+    });
+
+    await transporter.sendMail({
+      from: gmailUser,
+      to: recipient,
+      subject: 'Hospitality Group Management - Excel Data Backup',
+      text: 'Attached is the latest Excel backup covering all stored collections and properties. Keep this attachment secure.',
+      attachments: [{
+        filename: 'hospitality-group-backup-' +
+          new Date().toISOString().replace(/[:.]/g, '-') + '.xlsx',
+        content: attachment,
+        contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }]
+    });
+
+    res.json({
+      message: 'Excel backup emailed successfully.',
+      recipient,
+      collections: collections.length,
+      records: collections.reduce((sum, [, rows]) => sum + rows.length, 0)
+    });
+  } catch (error) {
+    console.error('Email backup failed:', error);
+    res.status(500).json({
+      error: 'Could not create or email the backup. Check the server terminal for details.'
+    });
+  }
+});
+
 app.use('/api', (_req, res) => res.status(404).json({ error: 'Simulated endpoint not implemented yet.' }));
 app.listen(4000, () => console.log('Simulated API listening at http://localhost:4000'));

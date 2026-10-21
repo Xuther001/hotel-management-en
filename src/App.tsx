@@ -37,8 +37,8 @@ const titleMap: Record<string, string> = {
 function Badge({ children, tone = 'neutral' }: { children: ReactNode; tone?: string }) {
   return <span className={`badge ${tone}`}>{children}</span>;
 }
-function Button({ children, onClick, variant = 'primary', type = 'button' }: { children: ReactNode; onClick?: () => void; variant?: string; type?: 'button'|'submit' }) {
-  return <button type={type} className={`button ${variant}`} onClick={onClick}>{children}</button>;
+function Button({ children, onClick, variant = 'primary', type = 'button', disabled = false }: { children: ReactNode; onClick?: () => void; variant?: string; type?: 'button'|'submit'; disabled?: boolean }) {
+  return <button type={type} className={`button ${variant}`} onClick={onClick} disabled={disabled}>{children}</button>;
 }
 function Panel({ title, subtitle, action, children }: { title: string; subtitle?: string; action?: ReactNode; children: ReactNode }) {
   return <section className="panel"><div className="panel-head"><div><h3>{title}</h3>{subtitle && <p>{subtitle}</p>}</div>{action}</div>{children}</section>;
@@ -739,7 +739,42 @@ function Reports({property}:{property:string}) {
   return <><PageHeader eyebrow="BUSINESS INTELLIGENCE" title="Reports & analytics" description="Explore the performance indicators used in the owner dashboard." actions={<Button variant="secondary" onClick={()=>window.print()}><FileText size={16}/> Print report</Button>}/><div className="stat-grid"><StatCard title="Revenue" value={money(data?.revenue||0)} icon={<CircleDollarSign size={19}/>} note="sample month"/><StatCard title="Operating profit" value={money(data?.operatingProfit||0)} icon={<ChartNoAxesCombined size={19}/>} note="illustrative estimate"/><StatCard title="Occupancy" value={`${data?.occupancy||0}%`} icon={<BedDouble size={19}/>} note="selected properties"/><StatCard title="Staff" value={String(data?.employeeCount||0)} icon={<Users size={19}/>} note="group-wide sample"/></div><Panel title="Revenue comparison" subtitle="VND millions · sample values"><div className="chart-wrap tall"><ResponsiveContainer width="100%" height="100%"><BarChart data={data?.revenueTrend||[]} margin={{top:12,right:10,left:0,bottom:0}}><CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#edf0f5"/><XAxis dataKey="month" tickLine={false} axisLine={false}/><YAxis tickLine={false} axisLine={false}/><Tooltip/><Bar dataKey="hotelA" name="Hotel A" fill="#4779ed" radius={[5,5,0,0]}/><Bar dataKey="hotelB" name="Hotel B" fill="#25b99a" radius={[5,5,0,0]}/></BarChart></ResponsiveContainer></div></Panel><div className="notice"><AlertTriangle size={17}/><div><strong>Reporting note</strong><span>Operating profit is a demonstration estimate, not a formal accounting calculation. Connect verified transactions and accounting rules before relying on reports.</span></div></div></>;
 }
 function SettingsPage() {
-  return <><PageHeader eyebrow="ADMINISTRATION" title="Settings" description="Configure how your business management system is organized."/><div className="settings-grid">{[{icon:<Building2/>,title:'Business & properties',text:'Manage hotels, business units, addresses, and operating settings.'},{icon:<Users/>,title:'Users & permissions',text:'Manage user accounts, roles, and property access.'},{icon:<Wallet/>,title:'Finance configuration',text:'Set currencies, expense categories, and approval thresholds.'},{icon:<Bell/>,title:'Notifications',text:'Choose which alerts and reminders are sent to each role.'},{icon:<FileText/>,title:'Documents & policies',text:'Configure document categories and retention policies.'},{icon:<Settings/>,title:'System preferences',text:'Language, time zone, date format, and application preferences.'}].map((s,i)=><button className="settings-card" key={i} onClick={()=>alert('Settings UI placeholder. This module will be connected to its API in a later iteration.')}><div className="settings-icon">{s.icon}</div><strong>{s.title}</strong><span>{s.text}</span><ArrowUpRight size={16}/></button>)}</div><div className="notice demo-notice"><AlertTriangle size={17}/><div><strong>Prototype security</strong><span>Demo mode does not implement real authentication or authorization. Do not enter real personal, payroll, or financial data.</span></div></div></>;
+  const [backupState, setBackupState] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [backupMessage, setBackupMessage] = useState('');
+
+  async function sendBackup() {
+    if (backupState === 'sending') return;
+    setBackupState('sending');
+    setBackupMessage('Creating the Excel workbook and sending email...');
+    try {
+      const result = await api.backupEmail();
+      setBackupState('success');
+      setBackupMessage(`${result.message} Sent to ${result.recipient}. ${result.collections} collections and ${result.records} records included.`);
+    } catch (error) {
+      setBackupState('error');
+      setBackupMessage(error instanceof Error ? error.message : 'Backup email failed.');
+    }
+  }
+
+  return <><PageHeader eyebrow="ADMINISTRATION" title="Settings" description="Configure how your business management system is organized."/><div className="backup-panel">
+      <div className="backup-copy">
+        <div className="settings-icon"><FileText size={22} /></div>
+        <div>
+          <h3>Email Excel data backup</h3>
+          <p>Send a formatted Excel workbook containing all properties and stored records to xuther86@gmail.com.</p>
+          <span>Includes properties, reservations, rooms, employees, expenses, tasks, and activity logs.</span>
+        </div>
+      </div>
+      <div className="backup-actions">
+        <Button variant="secondary" onClick={() => { window.location.href = '/api/v1/backup/download'; }}>
+          Download Excel Backup
+        </Button>
+        <Button onClick={sendBackup} disabled={backupState === 'sending'}>
+          {backupState === 'sending' ? 'Sending backup...' : 'Send Excel Backup'}
+        </Button>
+      </div>
+      {backupMessage && <p className={`backup-message ${backupState}`} role="status">{backupMessage}</p>}
+    </div><div className="settings-grid">{[{icon:<Building2/>,title:'Business & properties',text:'Manage hotels, business units, addresses, and operating settings.'},{icon:<Users/>,title:'Users & permissions',text:'Manage user accounts, roles, and property access.'},{icon:<Wallet/>,title:'Finance configuration',text:'Set currencies, expense categories, and approval thresholds.'},{icon:<Bell/>,title:'Notifications',text:'Choose which alerts and reminders are sent to each role.'},{icon:<FileText/>,title:'Documents & policies',text:'Configure document categories and retention policies.'},{icon:<Settings/>,title:'System preferences',text:'Language, time zone, date format, and application preferences.'}].map((s,i)=><button className="settings-card" key={i} onClick={()=>alert('Settings UI placeholder. This module will be connected to its API in a later iteration.')}><div className="settings-icon">{s.icon}</div><strong>{s.title}</strong><span>{s.text}</span><ArrowUpRight size={16}/></button>)}</div><div className="notice demo-notice"><AlertTriangle size={17}/><div><strong>Prototype security</strong><span>Demo mode does not implement real authentication or authorization. Do not enter real personal, payroll, or financial data.</span></div></div></>;
 }
 function ComingSoon({title,description,icon}:{title:string;description:string;icon:ReactNode}) {
   return <><PageHeader eyebrow="BUSINESS OPERATIONS" title={title} description={description}/><div className="coming-card"><div className="coming-icon">{icon}</div><h2>Module foundation is ready</h2><p>This section is included in the navigation and can be built next. Its production endpoints and workflows have not yet been implemented in the simulated API.</p><Button onClick={()=>alert('This module is on the implementation roadmap.')}>View implementation roadmap <ArrowUpRight size={15}/></Button></div></>;

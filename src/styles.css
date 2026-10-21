@@ -155,3 +155,97 @@
     transform: none;
   }
 }
+
+
+/* Excel email backup panel */
+.backup-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 22px 0;
+  padding: 22px;
+  border: 1px solid #dce5f0;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.backup-copy {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex: 1;
+  min-width: 240px;
+}
+
+.backup-copy h3 {
+  margin: 2px 0 8px;
+  font-size: 16px;
+}
+
+.backup-copy p {
+  margin: 0 0 7px;
+  color: #344054;
+  line-height: 1.5;
+}
+
+.backup-copy span {
+  color: #667085;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.backup-message {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.backup-message.success {
+  color: #16804a;
+}
+
+.backup-message.error {
+  color: #b42318;
+}
+
+.backup-message.sending {
+  color: #475467;
+}
+
+@media (max-width: 560px) {
+  .backup-panel {
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .backup-panel > .button {
+    width: 100%;
+  }
+}
+
+
+.backup-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.backup-actions .button {
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .backup-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .backup-actions .button {
+    width: 100%;
+  }
+}

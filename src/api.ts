@@ -25,5 +25,6 @@ export const api = {
   createExpense: (data: any) => request<any>('/finance/expenses', { method: 'POST', body: JSON.stringify(data) }),
   tasks: () => request<any>('/housekeeping/tasks'),
   activity: () => request<any>('/audit-logs'),
+  backupEmail: () => request<any>('/backup/email', { method: 'POST' }),
 };
 export const money = (value: number) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(value);
