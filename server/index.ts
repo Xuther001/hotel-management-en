@@ -474,6 +474,31 @@ app.patch('/api/v1/reservations/:id', (req, res) => {
   if (!item) return res.status(404).json({ error: 'Reservation not found.' });
 
   const body = req.body || {};
+  const detailFields = [
+    'guest', 'propertyId', 'room', 'checkIn', 'checkOut',
+    'guests', 'amount', 'source'
+  ];
+  const editingDetails = detailFields.some(key =>
+    Object.prototype.hasOwnProperty.call(body, key)
+  );
+  const currentStatus = String(item.status || '').toLowerCase();
+  const lockedStatuses = ['checked out', 'cancelled', 'canceled', 'no-show', 'no show'];
+
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  if (editingDetails && lockedStatuses.includes(currentStatus)) {
+    return res.status(400).json({
+      error: 'This reservation can no longer be edited because it is checked out or closed.'
+    });
+  }
+
+  if (editingDetails && item.checkOut < today) {
+    return res.status(400).json({
+      error: 'This reservation can no longer be edited because its stay has ended.'
+    });
+  }
+
   const allowedStatuses = ['Confirmed', 'Arriving today', 'Checked in', 'Checked out', 'Cancelled', 'No-show'];
 
   if (body.status !== undefined && !allowedStatuses.includes(body.status)) {
@@ -487,14 +512,6 @@ app.patch('/api/v1/reservations/:id', (req, res) => {
   }
   if (updated.checkOut <= updated.checkIn) {
     return res.status(400).json({ error: 'Check-out must be after check-in.' });
-  }
-
-  if (body.checkIn !== undefined) {
-    const now = new Date();
-    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-    if (updated.checkIn < today) {
-      return res.status(400).json({ error: 'Check-in cannot be in the past.' });
-    }
   }
 
   const status = String(updated.status || '').toLowerCase();
@@ -554,7 +571,9 @@ app.patch('/api/v1/reservations/:id', (req, res) => {
 
   d.activity.unshift({
     id: Date.now(),
-    text: `Reservation ${item.id} status updated to ${item.status}`,
+    text: editingDetails
+      ? `Reservation ${item.id} details edited for ${item.guest}`
+      : `Reservation ${item.id} status updated to ${item.status}`,
     by: 'Demo User',
     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   });

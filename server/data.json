@@ -180,7 +180,7 @@
       "room": "501",
       "propertyId": "hotel-a",
       "checkIn": "2026-10-18",
-      "checkOut": "2027-12-18",
+      "checkOut": "2026-12-18",
       "guests": 1,
       "status": "Checked in",
       "source": "Direct",
@@ -650,6 +650,24 @@
     }
   ],
   "activity": [
+    {
+      "id": 1792576031125,
+      "text": "Reservation RES-1066 details edited for TRẦN KHẮC VINH",
+      "by": "Demo User",
+      "time": "04:47 PM"
+    },
+    {
+      "id": 1792576021141,
+      "text": "Reservation RES-1066 details edited for TRẦN KHẮC VINH",
+      "by": "Demo User",
+      "time": "04:47 PM"
+    },
+    {
+      "id": 1792576010470,
+      "text": "Reservation RES-1066 details edited for TRẦN KHẮC VINH",
+      "by": "Demo User",
+      "time": "04:46 PM"
+    },
     {
       "id": 1792560035593,
       "text": "Reservation RES-1053 for Tien Nguyen permanently deleted",
