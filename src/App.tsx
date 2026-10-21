@@ -822,13 +822,13 @@ function SettingsPage() {
         </div>
       </div>
       <div className="backup-actions">
-        <Button variant="secondary" onClick={() => { window.location.href = '/api/v1/backup/download'; }}>
+        <Button onClick={() => { window.location.href = '/api/v1/backup/download'; }}>
           Download All Data
         </Button>
-        <Button variant="secondary" onClick={() => { window.location.href = '/api/v1/backup/reservations/download'; }}>
+        <Button onClick={() => { window.location.href = '/api/v1/backup/reservations/download'; }}>
           Download Reservations Data
         </Button>
-        <Button onClick={sendBackup} disabled={backupState === 'sending'}>
+        <Button variant="secondary" onClick={sendBackup} disabled={backupState === 'sending'}>
           {backupState === 'sending' ? 'Sending backup...' : 'Send Excel Backup'}
         </Button>
       </div>
