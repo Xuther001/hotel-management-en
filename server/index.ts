@@ -12,11 +12,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dataPath = path.join(__dirname, 'data.json');
+const dataPath = process.env.DATA_FILE || path.join(__dirname, 'data.json');
 
 type AnyRecord = Record<string, any>;
 
-const pushSubscriptionsPath = path.join(__dirname, 'push-subscriptions.json');
+const pushSubscriptionsPath = process.env.PUSH_SUBSCRIPTIONS_FILE || path.join(__dirname, 'push-subscriptions.json');
 
 function readPushSubscriptions(): any[] {
   try {
@@ -359,7 +359,12 @@ function initialData() {
   };
 }
 function readData(): AnyRecord {
-  if (!fs.existsSync(dataPath)) fs.writeFileSync(dataPath, JSON.stringify(initialData(), null, 2));
+  if (!fs.existsSync(dataPath)) {
+    if (process.env.DATA_FILE) {
+      throw new Error(`Configured data file does not exist: ${dataPath}. Restore the hotel data before starting the service.`);
+    }
+    fs.writeFileSync(dataPath, JSON.stringify(initialData(), null, 2));
+  }
   return JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 }
 function writeData(data: AnyRecord) { fs.writeFileSync(dataPath, JSON.stringify(data, null, 2)); }
@@ -1142,4 +1147,7 @@ app.post('/api/v1/backup/email', async (_req, res) => {
 });
 
 app.use('/api', (_req, res) => res.status(404).json({ error: 'Simulated endpoint not implemented yet.' }));
-app.listen(4000, () => console.log('Simulated API listening at http://localhost:4000'));
+const port = Number(process.env.PORT || 4000);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Hotel management API listening on port ${port}`);
+});

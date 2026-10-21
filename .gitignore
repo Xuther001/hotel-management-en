@@ -7,3 +7,6 @@ dist/
 .DS_Store
 
 server/push-subscriptions.json
+server/data.json
+server/data.json.local-backup
+server/index.ts.pre-render-backup

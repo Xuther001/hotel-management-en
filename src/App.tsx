@@ -7,7 +7,7 @@ import {
   UserRound, CalendarCheck, ClipboardList, FileText, CircleDollarSign, Sparkles
 } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, AreaChart, Area } from 'recharts';
-import { api, money } from './api';
+import { api, money, API_URL } from './api';
 
 type AnyRow = Record<string, any>;
 const navGroups = [
@@ -822,10 +822,10 @@ function SettingsPage() {
         </div>
       </div>
       <div className="backup-actions">
-        <Button onClick={() => { window.location.href = '/api/v1/backup/download'; }}>
+        <Button onClick={() => { window.location.href = `${API_URL}/backup/download`; }}>
           Download All Data
         </Button>
-        <Button onClick={() => { window.location.href = '/api/v1/backup/reservations/download'; }}>
+        <Button onClick={() => { window.location.href = `${API_URL}/backup/reservations/download`; }}>
           Download Reservations Data
         </Button>
         <Button variant="secondary" onClick={sendBackup} disabled={backupState === 'sending'}>
